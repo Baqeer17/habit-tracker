@@ -2,16 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Habit extends Model
 {
-    // Kolom yang boleh diisi manual
-    protected $fillable = ['name', 'description', 'icon'];
+    use HasFactory;
 
-    // Relasi: Satu kebiasaan bisa diambil oleh banyak user
-    public function userHabits()
+    /**
+     * Kolom yang boleh diisi:
+     * - user_id: Siapa pemiliknya (PENTING!)
+     * - status: Apakah sudah dikerjakan?
+     */
+    protected $fillable = [
+        'user_id', 
+        'name',
+        'description',
+        'icon',
+        'status',
+    ];
+
+    /**
+     * Relasi Baru:
+     * Kebiasaan ini MILIK satu User saja.
+     * (Kebalikan dari hasMany di User.php tadi)
+     */
+    public function user()
     {
-        return $this->hasMany(UserHabit::class);
+        return $this->belongsTo(User::class);
     }
 }

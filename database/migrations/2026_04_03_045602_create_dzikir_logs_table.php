@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('dzikir_logs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->date('date');
+            $table->boolean('pagi_completed')->default(false);
+            $table->json('pagi_details')->nullable();
+            $table->boolean('petang_completed')->default(false);
+            $table->json('petang_details')->nullable();
+            $table->boolean('salat_completed')->default(false);
+            $table->json('salat_details')->nullable();
+            $table->timestamps();
+            
+            $table->unique(['user_id', 'date']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('dzikir_logs');
+    }
+};

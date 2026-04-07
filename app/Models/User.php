@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +22,22 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'latitude',
+        'longitude',
+        'google_id',
+        'avatar',
+        'bio',
+        'phone',
+        'gender',
+        'location_name',
+        'language',
+        'theme',
+        'font_size',
+        'azan_notification',
+        'silent_mode',
+        'tahajud_time',
+        'duha_time',
+        'tilawah_time',
     ];
 
     /**
@@ -44,5 +61,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relasi: Satu User memiliki BANYAK Habit.
+     * Ini kuncinya agar kita bisa memanggil $user->habits
+     */
+    public function habits()
+    {
+        return $this->hasMany(Habit::class);
     }
 }

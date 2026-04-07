@@ -1,0 +1,17 @@
+{
+    "name": "Mahabba - Spiritual Tracker",
+    "short_name": "Mahabba",
+    "start_url": "/dashboard",
+    "display": "standalone",
+    "background_color": "#F8FBFC",
+    "theme_color": "#2D5A43",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icons/app_icon.png",
+            "sizes": "any",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

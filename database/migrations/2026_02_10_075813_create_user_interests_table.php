@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('user_interests', function (Blueprint $table) {
+            $table->id();
+            $table->string('session_id')->index(); // Untuk user guest
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade'); // Untuk user login (opsional)
+            $table->string('topic');
+            $table->integer('score')->default(0);
+            $table->timestamps();
+
+            // Unique constraint to prevent duplicate rows per session+topic
+            $table->unique(['session_id', 'topic']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('user_interests');
+    }
+};
