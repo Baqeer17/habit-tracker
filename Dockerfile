@@ -49,4 +49,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 # Jalankan Apache saat container distart
-CMD php artisan config:clear && php artisan cache:clear && php artisan migrate --force && apache2-foreground
+CMD php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan cache:clear && php artisan migrate --force && apache2-foreground
