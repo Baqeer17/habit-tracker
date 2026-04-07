@@ -93,18 +93,3 @@ Route::get('/shalat-sunnah/ghairu-muakkad', [PrayerController::class, 'ghairuMua
 // One Day One Hadis
 use App\Http\Controllers\HadithController;
 Route::get('/one-day-one-hadith', [HadithController::class, 'index'])->name('hadith.index');
-// Route Rahasia untuk Jalankan Migrasi Database di Render
-Route::get('/gas-migrate', function () {
-    try {
-        // Membersihkan cache konfigurasi lama
-        \Artisan::call('config:clear');
-        \Artisan::call('cache:clear');
-        
-        // Menjalankan migrasi database
-        \Artisan::call('migrate --force');
-        
-        return "<h1>Mantap, Mas!</h1><p>Database MahabBa Berhasil Diinstal/Diupdate.</p><a href='/'>Klik di sini untuk balik ke Login</a>";
-    } catch (\Exception $e) {
-        return "<h1>Waduh, Gagal!</h1><p>Error: " . $e->getMessage() . "</p>";
-    }
-});

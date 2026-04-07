@@ -1,6 +1,4 @@
 <?php
-exec('php artisan config:clear');
-exec('php artisan cache:clear');
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
