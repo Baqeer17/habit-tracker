@@ -1,5 +1,5 @@
 {
-    "_comment": "Vercel Deployment Trigger - 2026-04-09",
+    "_comment": "Hard Reset: Build Trigger - 2026-04-09 23:17",
     "version": 2,
     "framework": null,
     "functions": {
@@ -16,6 +16,5 @@
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
-    ],
-    "_comment": "Deployment trigger: 2026-04-09 23:03"
+    ]
 }
