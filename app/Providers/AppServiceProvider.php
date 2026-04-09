@@ -19,8 +19,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (config('app.env') === 'production') {
+        if (app()->environment('production')) {
             URL::forceScheme('https');
+        }
+
+        // Redirect compiled views to /tmp for Vercel/Serverless read-only filesystem
+        if (app()->environment('production')) {
+            config(['view.compiled' => '/tmp/views']);
         }
 
         // Force HTTPS if:
