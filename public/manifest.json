@@ -8,8 +8,8 @@
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/icons/app_icon.png",
-            "sizes": "any",
+            "src": "/icons/icon.png",
+            "sizes": "192x192 512x512 any",
             "type": "image/png",
             "purpose": "any maskable"
         }
