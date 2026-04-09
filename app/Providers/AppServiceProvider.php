@@ -25,7 +25,11 @@ class AppServiceProvider extends ServiceProvider
 
         // Redirect compiled views to /tmp for Vercel/Serverless read-only filesystem
         if (app()->environment('production')) {
-            config(['view.compiled' => '/tmp/views']);
+            config(['view.compiled' => '/tmp/storage/framework/views']);
+            
+            if (!is_dir(config('view.compiled'))) {
+                mkdir(config('view.compiled'), 0755, true);
+            }
         }
 
         // Force HTTPS if:
