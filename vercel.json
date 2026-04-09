@@ -1,20 +1,18 @@
 {
-    "_comment": "Hard Reset: Build Trigger - 2026-04-09 23:17",
-    "version": 2,
-    "framework": null,
-    "functions": {
-        "api/*.php": {
-            "runtime": "vercel-php"
-        }
+  "version": 2,
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php"
+    }
+  },
+  "routes": [
+    {
+      "src": "/(css|js|images|icon.png|manifest.json|favicon.png)/(.*)",
+      "dest": "/public/$1/$2"
     },
-    "routes": [
-        {
-            "src": "/(build|icons|icon.png|manifest.json|favicon.ico|robots.txt|sw.js)(.*)",
-            "dest": "/public/$1$2"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
-        }
-    ]
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
+  ]
 }
