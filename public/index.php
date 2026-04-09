@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Vercel Fresh Build Trigger: 2026-04-10 00:15
- * This comment forces Vercel to re-register service providers.
+ * Hard Registry Reset: 2026-04-10 00:20
+ * Forcing Vercel to rebuild the service provider index.
  */
 
 use Illuminate\Foundation\Application;
