@@ -8,8 +8,12 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- PWA Manifest & Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icon.png') }}?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icon.png') }}?v=2">
+    <link rel="shortcut icon" href="{{ asset('icon.png') }}?v=2">
+    <link rel="apple-touch-icon" href="{{ asset('icon.png') }}?v=2">
+    <link rel="manifest" href="{{ asset('manifest.json') }}?v=2">
 
     <!-- Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">

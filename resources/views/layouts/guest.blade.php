@@ -7,8 +7,12 @@
 
     <title>{{ config('app.name', 'MahabBa') }} - Bangun Hari yang Lebih Dekat dengan-Nya</title>
 
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- PWA Manifest & Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icon.png') }}?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icon.png') }}?v=2">
+    <link rel="shortcut icon" href="{{ asset('icon.png') }}?v=2">
+    <link rel="apple-touch-icon" href="{{ asset('icon.png') }}?v=2">
+    <link rel="manifest" href="{{ asset('manifest.json') }}?v=2">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
