@@ -8,12 +8,13 @@
     },
     "routes": [
         {
-            "src": "/(css|js|images|icon.png|manifest.json|favicon.png)/(.*)",
-            "dest": "/public/$1/$2"
+            "src": "/(build|icons|icon.png|manifest.json|favicon.ico|robots.txt|sw.js)(.*)",
+            "dest": "/public/$1$2"
         },
         {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
-    ]
+    ],
+    "_comment": "Deployment trigger: 2026-04-09 23:03"
 }
