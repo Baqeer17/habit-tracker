@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Vercel Fresh Build Trigger: 2026-04-10 00:15
+ * This comment forces Vercel to re-register service providers.
+ */
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
