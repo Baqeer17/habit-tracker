@@ -20,9 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 1. Force HTTPS in production
+        // 1. Force HTTPS in production (fixes asset URL mismatch on Render)
         if (app()->environment('production')) {
             \URL::forceScheme('https');
+            \URL::forceRootUrl(config('app.url'));
+            // Livewire asset URL fix (safe no-op if Livewire is not installed)
+            \Illuminate\Support\Facades\Config::set('livewire.asset_url', config('app.url'));
         }
 
         // 2. Ensure writable directories exist for serverless Vercel environment
