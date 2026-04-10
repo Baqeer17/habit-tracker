@@ -13,6 +13,9 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+// Web-based login (creates session + token)
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');

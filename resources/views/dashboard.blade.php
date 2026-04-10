@@ -114,8 +114,30 @@
 
     @media (max-width: 768px) {
         .dashboard-grid { grid-template-columns: 1fr; }
-        .header { flex-direction: column; text-align: center; gap: 15px; }
+        .header { 
+            flex-direction: column; text-align: center; gap: 10px;
+            padding: 15px 20px; border-radius: 16px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 18px; }
+        .header p { font-size: 12px; margin-top: 2px; }
         .next-prayer { text-align: center; }
+        .next-prayer h3 { font-size: 10px; }
+        .next-prayer .timer { font-size: 22px; }
+        .menu-grid { gap: 12px; }
+        .card { 
+            min-height: 100px; padding: 14px; border-radius: 16px;
+        }
+        .card-icon { font-size: 24px; margin-bottom: 10px; }
+        .card-title { font-size: 11px; padding: 4px 14px; }
+        .widget-box { padding: 18px; border-radius: 16px; }
+        .mood-box { padding: 15px; border-radius: 16px; font-size: 13px; }
+    }
+
+    @media (max-width: 380px) {
+        .header h1 { font-size: 16px; }
+        .card { min-height: 85px; padding: 12px; }
+        .card-icon { font-size: 20px; margin-bottom: 8px; }
+        .card-title { font-size: 10px; padding: 3px 12px; }
     }
 </style>
 @endpush
