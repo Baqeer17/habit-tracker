@@ -1,4 +1,9 @@
 <?php
+
+// Nuclear Fix: Ensure writable view path exists before any Laravel bootstrapping
+if (!is_dir('/tmp/storage/framework/views')) {
+    @mkdir('/tmp/storage/framework/views', 0755, true);
+}
 // Vercel Path Fix v2
 
 /**
