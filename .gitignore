@@ -16,9 +16,12 @@ auth.json
 .DS_Store
 Thumbs.db
 
-# Laravel Specific
-/bootstrap/cache/*.php
+# Laravel Vercel Specific
+/bootstrap/cache/services.php
+/bootstrap/cache/packages.php
+/bootstrap/cache/config.php
+/bootstrap/cache/routes-v7.php
 /storage/framework/cache/data/*
 /storage/framework/sessions/*
+/storage/framework/views/*
 /storage/framework/testing/*
-/storage/framework/views/*.php
