@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GoogleController extends Controller
 {
@@ -44,7 +45,11 @@ class GoogleController extends Controller
             return redirect()->intended('dashboard');
 
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Gagal login dengan Google');
+            Log::error('Google Login Error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect('/login')->with('error', 'Gagal login dengan Google: ' . $e->getMessage());
         }
     }
 }
