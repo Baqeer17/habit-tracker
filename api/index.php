@@ -1,23 +1,24 @@
 <?php
 
 /**
- * Final Registry Nuke & DevOps Sanitization
- * Forcing Vercel to rebuild all indicators from a clean state.
+ * Mahabba - Vercel Deployment Bridge
+ * Menghubungkan Vercel Serverless Function ke Laravel Core
  */
 
-// 1. Set env overrides SEBELUM apapun
-putenv('CACHE_DRIVER=array');
-putenv('SESSION_DRIVER=cookie');
-putenv('LOG_CHANNEL=stderr');
-putenv('VIEW_COMPILED_PATH=/tmp/views');
+// 1. Membuat folder writable secara dinamis di memory sementara Vercel (/tmp)
+// Ini krusial untuk mencegah error "Read-only file system"
+$paths = [
+    '/tmp/storage/framework/views',
+    '/tmp/storage/framework/cache',
+    '/tmp/storage/framework/sessions',
+];
 
-// 2. Buat direktori writable
-foreach (['/tmp/views', '/tmp/cache', '/tmp/sessions'] as $dir) {
-    if (!is_dir($dir)) {
-        @mkdir($dir, 0755, true);
+foreach ($paths as $path) {
+    if (!is_dir($path)) {
+        mkdir($path, 0755, true);
     }
 }
 
-// 3. Baru boot Laravel melalui public/index.php
-// Kita HAPUS baris define LARAVEL_START karena sudah ada di file di bawah ini:
+// 2. Memanggil entry point utama Laravel
+// Kita tidak mendefinisikan LARAVEL_START di sini karena sudah didefinisikan di public/index.php
 require __DIR__ . '/../public/index.php';
