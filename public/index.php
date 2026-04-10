@@ -1,4 +1,5 @@
 <?php
+// Vercel Path Fix v2
 
 /**
  * Hard Registry Reset: 2026-04-10 00:20

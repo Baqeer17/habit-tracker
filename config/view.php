@@ -28,9 +28,6 @@ return [
     |
     */
 
-    'compiled' => env(
-        'VIEW_COMPILED_PATH',
-        '/tmp/storage/framework/views'
-    ),
+    'compiled' => env('VIEW_COMPILED_PATH', '/tmp/storage/framework/views'),
 
 ];
