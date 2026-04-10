@@ -6,6 +6,11 @@
  */
 
 try {
+    // Ensure writable /tmp path exists for serverless view compilation
+    if (!is_dir('/tmp/storage/framework/views')) {
+        @mkdir('/tmp/storage/framework/views', 0755, true);
+    }
+
     require __DIR__ . '/../public/index.php';
 } catch (\Throwable $e) {
     header('HTTP/1.1 500 Internal Server Error');
