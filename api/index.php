@@ -1,5 +1,4 @@
 <?php
-define('LARAVEL_START', microtime(true));
 
 /**
  * Final Registry Nuke & DevOps Sanitization
@@ -19,14 +18,6 @@ foreach (['/tmp/views', '/tmp/cache', '/tmp/sessions'] as $dir) {
     }
 }
 
-// 3. Sanitasi bootstrap/cache — hapus jika path bukan /var/task
-$cacheFiles = glob(__DIR__ . '/../bootstrap/cache/*.php');
-foreach ($cacheFiles as $file) {
-    $contents = file_get_contents($file);
-    if (strpos($contents, '/var/task') === false) {
-        @unlink($file);
-    }
-}
-
-// 4. Baru boot Laravel melalui public/index.php
+// 3. Baru boot Laravel melalui public/index.php
+// Kita HAPUS baris define LARAVEL_START karena sudah ada di file di bawah ini:
 require __DIR__ . '/../public/index.php';
