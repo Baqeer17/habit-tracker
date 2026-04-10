@@ -93,3 +93,5 @@ Route::get('/shalat-sunnah/ghairu-muakkad', [PrayerController::class, 'ghairuMua
 // One Day One Hadis
 use App\Http\Controllers\HadithController;
 Route::get('/one-day-one-hadith', [HadithController::class, 'index'])->name('hadith.index');
+
+// Deployment sync: 2026-04-10 09:05
