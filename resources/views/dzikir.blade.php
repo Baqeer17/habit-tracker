@@ -120,9 +120,19 @@
     .dark .info-text { color: #9ca3af; }
 
     @media (max-width: 768px) {
-        .dzikir-grid { grid-template-columns: 1fr; }
-        .tabs-container { width: 100%; justify-content: space-between; padding: 5px; }
-        .tab-btn { padding: 8px 15px; font-size: 12px; }
+        .dzikir-header { padding: 12px 20px; border-radius: 40px; margin-bottom: 16px; }
+        .dzikir-header h1 { font-size: 16px; }
+        .dzikir-grid { grid-template-columns: 1fr; gap: 16px; padding-bottom: 30px; }
+        .dzikir-card { padding: 18px; min-height: 200px; border-radius: 16px; }
+        .tabs-container { width: 100%; justify-content: space-between; padding: 4px; margin-bottom: 20px; }
+        .tab-btn { padding: 7px 14px; font-size: 12px; }
+        .card-title { font-size: 14px; }
+    }
+
+    @media (max-width: 380px) {
+        .dzikir-header { padding: 10px 16px; }
+        .tab-btn { padding: 6px 10px; font-size: 11px; }
+        .dzikir-card { padding: 14px; min-height: 180px; }
     }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">

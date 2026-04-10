@@ -66,7 +66,7 @@
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
             z-index: 100;
             height: 100vh;
             overflow-y: auto;
@@ -142,10 +142,11 @@
         @media (max-width: 768px) {
             body { height: auto; overflow: auto; display: block; }
             .sidebar {
-                position: fixed; left: -260px; height: 100dvh;
+                position: fixed; left: 0; height: 100dvh;
+                transform: translateX(-100%);
                 box-shadow: 5px 0 15px rgba(0,0,0,0.1);
             }
-            .sidebar.active { left: 0; }
+            .sidebar.active { transform: translateX(0); }
             .hamburger-btn { display: block; }
             .main-content { width: 100%; height: auto; overflow: visible; padding: 80px 20px 40px; }
         }
@@ -282,16 +283,24 @@
         @media (max-width: 768px) {
             body { height: auto; overflow: auto; display: block; }
             .sidebar {
-                position: fixed; left: -260px; height: 100dvh;
+                position: fixed; left: 0; height: 100dvh;
+                transform: translateX(-100%);
                 box-shadow: 5px 0 15px rgba(0,0,0,0.1);
             }
-            .sidebar.active { left: 0; }
-            .hamburger-btn { display: none !important; } /* Hide hamburger — use bottom nav instead */
+            .sidebar.active { transform: translateX(0); }
+            .hamburger-btn { display: none !important; }
             .main-content {
                 width: 100%; height: auto; overflow: visible;
-                padding: 20px 16px 100px; /* bottom padding for bottom nav */
+                padding: 20px 14px 90px;
             }
             .mobile-bottom-nav { display: block; }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 380px) {
+            .main-content { padding: 16px 12px 88px; }
+            .mobile-nav-item { font-size: 8px; min-width: 46px; padding: 5px 6px; }
+            .mobile-nav-item i { font-size: 16px; }
         }
 
         @keyframes modalAppear {

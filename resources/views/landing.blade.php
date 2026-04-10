@@ -25,7 +25,7 @@
 </header>
 
 <!-- Hero Section -->
-<section class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-gradient-to-br from-white via-[#F8FBFC] to-[#E6F3F5] min-h-[95vh] flex flex-col justify-center">
+<section class="relative pt-28 pb-16 md:pt-48 md:pb-32 overflow-hidden bg-gradient-to-br from-white via-[#F8FBFC] to-[#E6F3F5] min-h-[90vh] md:min-h-[95vh] flex flex-col justify-center">
     
     <!-- Moving Quranic Verses Background -->
     <div class="absolute inset-x-0 top-0 h-full overflow-hidden z-0 opacity-[0.10] pointer-events-none flex flex-col justify-evenly py-10" dir="rtl">
@@ -61,7 +61,7 @@
                 </div>
             </div>
             
-            <h1 class="text-4xl md:text-5xl lg:text-7xl leading-tight md:leading-tight lg:leading-tight text-gray-900 mb-6 font-serif tracking-tight px-2">
+            <h1 class="text-3xl md:text-5xl lg:text-7xl leading-tight md:leading-tight lg:leading-tight text-gray-900 mb-4 md:mb-6 font-serif tracking-tight px-2">
                 Bangun hari yang lebih <span class="text-[#2D5A43] italic relative">dekat<svg class="absolute w-full h-[0.3em] -bottom-1 left-0 text-[#B89E58]/40" fill="currentColor" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5"></path></svg></span> dengan-Nya.
             </h1>
             
@@ -70,7 +70,7 @@
                 اجعلنا محبتك يا الله
             </p>
 
-            <p class="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed">
+            <p class="text-gray-500 text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed px-4 md:px-0">
                 Jadikan setiap detak waktumu bernilai ibadah. MahabBa membantumu menjaga istiqomah dengan pendekatan spiritual yang dekat dan menenangkan.
             </p>
         </div>
@@ -217,13 +217,13 @@
 <!-- ========================================== -->
 <!-- FITUR UTAMA SECTION (From User Prompt)     -->
 <!-- ========================================== -->
-<section class="py-20 px-6 max-w-7xl mx-auto bg-[#F8FBFC]">
+<section class="py-14 md:py-20 px-4 md:px-6 max-w-7xl mx-auto bg-[#F8FBFC]">
     <div class="text-center mb-16" data-aos="fade-up">
         <h2 class="text-[#2D5A43] text-3xl md:text-4xl font-bold mb-4 font-serif">Fitur Utama MahabBa</h2>
         <p class="text-gray-500 max-w-2xl mx-auto italic text-sm md:text-base">Membantumu menjaga istiqomah dalam ibadah dengan pendekatan teknologi yang menenangkan.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
         <!-- Tracker -->
         <div class="bg-white p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all duration-500 group border border-gray-50 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
             <div class="w-16 h-16 bg-[#E6F3F5] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#2D5A43] transition-colors duration-300">
@@ -233,13 +233,13 @@
             <p class="text-gray-500 text-sm leading-relaxed">Pantau grafik perkembangan shalat dan tilawahmu setiap hari dengan visual yang elegan.</p>
         </div>
 
-        <!-- Library -->
+        <!-- Kalkulator Zakat -->
         <div class="bg-white p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all duration-500 group border-t-4 border-[#2D5A43] hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
             <div class="w-16 h-16 bg-[#E6F3F5] rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#2D5A43] transition-colors duration-300">
-                <i class="fa-solid fa-book-quran text-[#2D5A43] group-hover:text-white text-2xl transition-colors duration-300"></i>
+                <i class="fa-solid fa-scale-balanced text-[#2D5A43] group-hover:text-white text-2xl transition-colors duration-300"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-3 font-serif">Library Mualaf</h3>
-            <p class="text-gray-500 text-sm leading-relaxed">Akses buku panduan dasar islam, doa harian, dan literatur pilihan secara gratis dan legal.</p>
+            <h3 class="text-xl font-bold text-gray-800 mb-3 font-serif">Kalkulator Zakat</h3>
+            <p class="text-gray-500 text-sm leading-relaxed">Hitung zakat mal, penghasilan, dan emas secara otomatis sesuai nisab terbaru dengan mudah dan akurat.</p>
         </div>
 
         <!-- Reminder -->
@@ -307,7 +307,7 @@
 <!-- FOOTER (From User Prompt)                  -->
 <!-- ========================================== -->
 <footer class="bg-white pt-20 pb-10 border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
         
         <!-- Brand -->
         <div class="col-span-1 md:col-span-1" data-aos="fade-right">

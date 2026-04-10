@@ -144,17 +144,17 @@
 
 @section('content')
     <!-- PWA INSTALL BANNER -->
-    <div id="pwa-install-banner" class="hidden md:flex flex-col sm:flex-row shadow-sm" style="background: #E6F3F5; color: #2D5A43; padding: 15px 20px; border-radius: 15px; margin-bottom: 25px; align-items: center; justify-content: space-between; border: 1px solid rgba(45,90,67,0.2);">
-        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;" class="sm:mb-0">
-            <i class="fas fa-home" style="font-size: 24px;"></i>
+    <div id="pwa-install-banner" class="hidden" style="background: #E6F3F5; color: #2D5A43; padding: 12px 16px; border-radius: 16px; margin-bottom: 16px; display: none; align-items: center; justify-content: space-between; border: 1px solid rgba(45,90,67,0.2); gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 200px;">
+            <i class="fas fa-home" style="font-size: 20px; flex-shrink: 0;"></i>
             <div>
-                <h4 style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">Instal MahabBa</h4>
-                <p style="font-size: 12px; font-weight: 500; opacity: 0.9;">Akses MahabBa lebih cepat dari layar utama HP-mu.</p>
+                <h4 style="font-weight: 700; font-size: 13px; margin-bottom: 1px;">Instal MahabBa</h4>
+                <p style="font-size: 11px; font-weight: 500; opacity: 0.9;">Akses lebih cepat dari layar utama HP-mu.</p>
             </div>
         </div>
-        <div style="display: flex; gap: 10px; width: 100%; justify-content: flex-end;" class="sm:w-auto">
-            <button onclick="dismissPwaInstall()" style="background: transparent; color: #2D5A43; border: 1px solid #2D5A43; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='rgba(45,90,67,0.1)'" onmouseout="this.style.background='transparent'">Nanti</button>
-            <button onclick="installPwa()" style="background: #2D5A43; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#1f4231'" onmouseout="this.style.background='#2D5A43'">Instal Sekarang</button>
+        <div style="display: flex; gap: 8px; flex-shrink: 0;">
+            <button onclick="dismissPwaInstall()" style="background: transparent; color: #2D5A43; border: 1px solid #2D5A43; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s;">Nanti</button>
+            <button onclick="installPwa()" style="background: #2D5A43; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s;">Instal</button>
         </div>
     </div>
 

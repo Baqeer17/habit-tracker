@@ -16,7 +16,11 @@
     }
 
     @media (max-width: 768px) {
-        .header { flex-direction: column; text-align: center; gap: 15px; }
+        .header { 
+            flex-direction: column; text-align: center; gap: 10px;
+            padding: 12px 20px; border-radius: 40px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 16px; }
     }
 </style>
 @endpush
