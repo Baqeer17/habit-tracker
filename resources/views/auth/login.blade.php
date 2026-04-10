@@ -28,7 +28,7 @@
 
                 <h3 class="text-3xl font-bold text-[#1E3A2B] mb-4">Login</h3>
 
-                <form id="loginForm" class="w-full space-y-4">
+                <form id="loginForm" method="POST" class="w-full space-y-4">
                     
                     <div>
                         <input type="email" id="email" 
@@ -73,11 +73,8 @@
                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                                 </svg>
                             </a>
-                        
-                        <!-- Other Icon (Placeholder) -->
-                        <div class="w-12 h-12 rounded-full bg-[#8E8E8E]"></div>
+                        </div>
                     </div>
-                </div>
 
                 <p class="text-xs text-gray-500 text-center mt-4 leading-relaxed">
                     by logging in you agree to MahabBa<br>

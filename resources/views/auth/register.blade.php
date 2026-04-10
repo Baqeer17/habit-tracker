@@ -33,7 +33,7 @@
                 <h2 class="text-2xl font-serif-elegant text-[#1E3A2B] mb-2">MahabBa</h2>
                 <h3 class="text-3xl font-bold text-[#1E3A2B] mb-8">Daftar Akun</h3>
 
-                <form id="registerForm" class="w-full space-y-4">
+                <form id="registerForm" method="POST" class="w-full space-y-4">
                     
                     <div>
                         <input type="text" id="name" 

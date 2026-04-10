@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // 1. Force HTTPS in production
         if (app()->environment('production')) {
-            URL::forceScheme('https');
+            \URL::forceScheme('https');
         }
 
         // 2. Ensure writable directories exist for serverless Vercel environment
