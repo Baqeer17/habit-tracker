@@ -53,14 +53,16 @@
             position: fixed;
             inset: 0;
             z-index: 9999;
-            background: #f3f4f6;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: opacity 0.55s ease, visibility 0.55s ease;
         }
         .dark #loading-screen {
-            background: #121212;
+            background: rgba(18, 18, 18, 0.92);
         }
         #loading-screen.visible {
             display: flex;
@@ -71,8 +73,12 @@
             pointer-events: none;
         }
         .loading-lottie-wrap {
-            width: min(340px, 72vw);
-            height: min(340px, 72vw);
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .loading-lottie-wrap dotlottie-player {
             width: 100%;
