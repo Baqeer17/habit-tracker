@@ -17,6 +17,9 @@
 
     <!-- Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- DotLottie Player -->
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CDN with class-based dark mode config -->
@@ -42,6 +45,41 @@
     </script>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        /* ══ LOADING SCREEN ══ */
+        #loading-screen {
+            display: none; /* JS will show it only on first visit */
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #f3f4f6;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.55s ease, visibility 0.55s ease;
+        }
+        .dark #loading-screen {
+            background: #121212;
+        }
+        #loading-screen.visible {
+            display: flex;
+        }
+        #loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .loading-lottie-wrap {
+            width: min(340px, 72vw);
+            height: min(340px, 72vw);
+        }
+        .loading-lottie-wrap dotlottie-player {
+            width: 100%;
+            height: 100%;
+        }
+        /* ══ END LOADING SCREEN ══ */
+    </style>
 
     <style>
         /* Shared Dashboard Styles */
@@ -312,6 +350,22 @@
 </head>
 <body class="transition-all duration-300">
 
+    {{-- ═══════════ LOADING SCREEN (All Devices, First Visit) ═══════════ --}}
+    <div id="loading-screen">
+        <div class="loading-lottie-wrap">
+            <dotlottie-player
+                id="lottiePlayer"
+                src="{{ asset('assets/loading.lottie') }}"
+                autoplay
+                loop
+                speed="1.7"
+                direction="1"
+                mode="bounce"
+                style="width:100%;height:100%;"
+            ></dotlottie-player>
+        </div>
+    </div>
+
     <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-50 hidden" onclick="toggleSidebar()"></div>
 
     <button class="hamburger-btn" onclick="toggleSidebar()">
@@ -434,6 +488,41 @@
     </script>
 
     @stack('scripts')
+
+    <script>
+        (function () {
+            var STORAGE_KEY = 'mahabba_visited';
+            var screen = document.getElementById('loading-screen');
+            if (!screen) return;
+
+            // Show only on the very first visit per session
+            if (!sessionStorage.getItem(STORAGE_KEY)) {
+                sessionStorage.setItem(STORAGE_KEY, '1');
+                screen.classList.add('visible');
+
+                var MIN_MS = 2400;
+                var start = Date.now();
+
+                function hideLoader() {
+                    var elapsed = Date.now() - start;
+                    var delay = Math.max(0, MIN_MS - elapsed);
+                    setTimeout(function () {
+                        screen.classList.add('fade-out');
+                        setTimeout(function () { screen.remove(); }, 600);
+                    }, delay);
+                }
+
+                if (document.readyState === 'complete') {
+                    hideLoader();
+                } else {
+                    window.addEventListener('load', hideLoader);
+                }
+            } else {
+                // Not first visit — remove immediately without showing
+                screen.remove();
+            }
+        })();
+    </script>
 
     <!-- Service Worker & Web Push Registration -->
     <script>
