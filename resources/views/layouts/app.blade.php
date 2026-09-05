@@ -18,8 +18,6 @@
     <!-- Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-    <!-- DotLottie Player -->
-    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CDN with class-based dark mode config -->
@@ -47,27 +45,25 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* ══ LOADING SCREEN ══ */
+        /* ══ LOADING SCREEN (White & Gold Logo Edition) ══ */
         #loading-screen {
             display: none; /* JS will show it only on first visit */
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: #ffffff;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
             box-sizing: border-box;
-            transition: opacity 0.55s ease, visibility 0.55s ease;
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
         }
         .dark #loading-screen {
-            background: rgba(18, 18, 18, 0.94);
+            background: #121212;
         }
         #loading-screen.visible {
             display: flex;
@@ -77,28 +73,120 @@
             visibility: hidden;
             pointer-events: none;
         }
-        .loading-lottie-wrap {
-            width: clamp(180px, 45vw, 320px);
-            height: clamp(180px, 45vw, 320px);
-            max-width: min(85vw, 65vh);
-            max-height: min(85vw, 65vh);
-            aspect-ratio: 1 / 1;
+        .loading-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+        .loading-logo-box {
+            width: clamp(96px, 26vw, 130px);
+            height: clamp(96px, 26vw, 130px);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            animation: logoBounce 2s ease-in-out infinite;
         }
-        .loading-lottie-wrap dotlottie-player {
-            display: block;
+        .loading-logo-img {
             width: 100%;
             height: 100%;
-            max-width: 100%;
-            max-height: 100%;
+            object-fit: contain;
+            border-radius: 28px;
+            filter: drop-shadow(0 12px 28px rgba(204, 164, 59, 0.25));
         }
+        .dark .loading-logo-img {
+            filter: drop-shadow(0 12px 28px rgba(229, 193, 88, 0.35));
+        }
+        .loading-app-title {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.4rem, 4vw, 1.75rem);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-top: 1.25rem;
+            margin-bottom: 0.2rem;
+            background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #A67C00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .loading-app-title {
+            background: linear-gradient(135deg, #E5C158 0%, #F3D98B 50%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loading-app-sub {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #9CA3AF;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .loading-progress-track {
+            width: clamp(120px, 35vw, 160px);
+            height: 4px;
+            background: rgba(204, 164, 59, 0.15);
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+        .dark .loading-progress-track {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .loading-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 45%;
+            background: linear-gradient(90deg, #CCA43B, #E5C158, #CCA43B);
+            border-radius: 9999px;
+            animation: progressSlide 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+        }
+
+        @keyframes logoBounce {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-10px) scale(1.04);
+            }
+        }
+
+        @keyframes progressSlide {
+            0% {
+                transform: translateX(-100%) scaleX(0.4);
+            }
+            50% {
+                transform: translateX(100%) scaleX(1);
+            }
+            100% {
+                transform: translateX(250%) scaleX(0.4);
+            }
+        }
+
         @media (max-height: 500px) {
-            .loading-lottie-wrap {
-                width: clamp(120px, 50vh, 180px);
-                height: clamp(120px, 50vh, 180px);
+            .loading-logo-box {
+                width: clamp(65px, 20vh, 85px);
+                height: clamp(65px, 20vh, 85px);
+            }
+            .loading-app-title {
+                font-size: 1.1rem;
+                margin-top: 0.5rem;
+                margin-bottom: 0.1rem;
+            }
+            .loading-app-sub {
+                font-size: 0.6rem;
+                margin-bottom: 0.75rem;
+            }
+            .loading-progress-track {
+                width: 95px;
+                height: 3px;
             }
         }
         /* ══ END LOADING SCREEN ══ */
