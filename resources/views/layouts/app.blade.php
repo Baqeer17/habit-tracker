@@ -45,13 +45,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* ══ LOADING SCREEN (White & Gold Logo Edition) ══ */
+        /* ══ LOADING SCREEN (MahabBa Brand Edition) ══ */
         #loading-screen {
             display: none; /* JS will show it only on first visit */
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: #ffffff;
+            background: #F8FBFC;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -80,56 +80,50 @@
             justify-content: center;
             text-align: center;
             width: 100%;
-            max-width: 320px;
+            max-width: 280px;
         }
         .loading-logo-box {
-            width: clamp(96px, 26vw, 130px);
-            height: clamp(96px, 26vw, 130px);
+            width: clamp(72px, 20vw, 88px);
+            height: clamp(72px, 20vw, 88px);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            animation: logoBounce 2s ease-in-out infinite;
+            animation: logoFloat 2.2s ease-in-out infinite;
         }
         .loading-logo-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 28px;
-            filter: drop-shadow(0 12px 28px rgba(204, 164, 59, 0.25));
-        }
-        .dark .loading-logo-img {
-            filter: drop-shadow(0 12px 28px rgba(229, 193, 88, 0.35));
         }
         .loading-app-title {
             font-family: 'Lora', serif;
-            font-size: clamp(1.4rem, 4vw, 1.75rem);
+            font-size: clamp(1.45rem, 4vw, 1.75rem);
             font-weight: 700;
-            letter-spacing: 0.05em;
-            margin-top: 1.25rem;
-            margin-bottom: 0.2rem;
-            background: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #A67C00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .dark .loading-app-title {
-            background: linear-gradient(135deg, #E5C158 0%, #F3D98B 50%, #D4AF37 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #d4a373;
+            letter-spacing: 0.5px;
+            margin-top: 14px;
+            margin-bottom: 3px;
+            line-height: 1.1;
         }
         .loading-app-sub {
             font-family: 'Poppins', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: #9CA3AF;
-            letter-spacing: 0.2em;
+            font-size: 11px;
+            font-weight: 600;
+            color: #1E3A2B;
+            letter-spacing: 2.2px;
             text-transform: uppercase;
-            margin-bottom: 1.5rem;
+            margin-bottom: 22px;
+            opacity: 0.75;
+        }
+        .dark .loading-app-sub {
+            color: #f3f4f6;
+            opacity: 0.7;
         }
         .loading-progress-track {
-            width: clamp(120px, 35vw, 160px);
-            height: 4px;
-            background: rgba(204, 164, 59, 0.15);
+            width: 110px;
+            height: 2.5px;
+            background: rgba(212, 163, 115, 0.22);
             border-radius: 9999px;
             overflow: hidden;
             position: relative;
@@ -142,51 +136,50 @@
             top: 0;
             left: 0;
             height: 100%;
-            width: 45%;
-            background: linear-gradient(90deg, #CCA43B, #E5C158, #CCA43B);
+            width: 38%;
+            background: #d4a373;
             border-radius: 9999px;
-            animation: progressSlide 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+            animation: progressSlide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
 
-        @keyframes logoBounce {
+        @keyframes logoFloat {
             0%, 100% {
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
             50% {
-                transform: translateY(-10px) scale(1.04);
+                transform: translateY(-7px);
             }
         }
 
         @keyframes progressSlide {
             0% {
-                transform: translateX(-100%) scaleX(0.4);
+                transform: translateX(-100%) scaleX(0.5);
             }
             50% {
                 transform: translateX(100%) scaleX(1);
             }
             100% {
-                transform: translateX(250%) scaleX(0.4);
+                transform: translateX(250%) scaleX(0.5);
             }
         }
 
         @media (max-height: 500px) {
             .loading-logo-box {
-                width: clamp(65px, 20vh, 85px);
-                height: clamp(65px, 20vh, 85px);
+                width: clamp(55px, 16vh, 70px);
+                height: clamp(55px, 16vh, 70px);
             }
             .loading-app-title {
-                font-size: 1.1rem;
-                margin-top: 0.5rem;
-                margin-bottom: 0.1rem;
+                font-size: 1.15rem;
+                margin-top: 8px;
+                margin-bottom: 1px;
             }
             .loading-app-sub {
-                font-size: 0.6rem;
-                margin-bottom: 0.75rem;
+                font-size: 9px;
+                margin-bottom: 14px;
             }
             .loading-progress-track {
-                width: 95px;
-                height: 3px;
+                width: 90px;
+                height: 2px;
             }
         }
         /* ══ END LOADING SCREEN ══ */

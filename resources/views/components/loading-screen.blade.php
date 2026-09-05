@@ -3,7 +3,7 @@
     <div class="loading-wrapper">
         <!-- Bouncing Gold Logo -->
         <div class="loading-logo-box">
-            <img src="{{ asset('icon.png') }}?v=2" alt="MahabBa Logo" class="loading-logo-img">
+            <img src="{{ asset('logo.png') }}?v=3" alt="MahabBa Logo" class="loading-logo-img">
         </div>
 
         <!-- App Brand Typography -->
