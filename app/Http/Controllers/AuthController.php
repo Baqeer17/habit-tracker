@@ -24,8 +24,9 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Otomatis login ke sesi (untuk Web)
-        Auth::login($user);
+        // Otomatis login ke sesi (untuk Web) dengan persistent remember
+        Auth::login($user, true);
+        $request->session()->regenerate();
 
         // Buat token (untuk API)
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -52,8 +53,9 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // Create web session (required for dashboard auth middleware)
-        Auth::login($user);
+        // Create web session with persistent remember (auto login across sessions)
+        Auth::login($user, true);
+        $request->session()->regenerate();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
