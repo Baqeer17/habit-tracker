@@ -53,21 +53,21 @@
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: rgba(248, 251, 252, 0.95);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
             box-sizing: border-box;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.55s ease, visibility 0.55s ease;
             user-select: none;
             -webkit-user-select: none;
             touch-action: none;
         }
         .dark #loading-screen {
-            background: rgba(18, 18, 18, 0.96);
+            background: rgba(18, 18, 18, 0.94);
         }
         #loading-screen.visible {
             display: flex;
@@ -77,21 +77,11 @@
             visibility: hidden;
             pointer-events: none;
         }
-        .loading-content-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            gap: 1rem;
-        }
         .loading-lottie-wrap {
-            width: clamp(160px, 45vw, 280px);
-            height: clamp(160px, 45vw, 280px);
-            max-width: min(75vw, 42vh);
-            max-height: min(75vw, 42vh);
+            width: clamp(180px, 45vw, 320px);
+            height: clamp(180px, 45vw, 320px);
+            max-width: min(85vw, 65vh);
+            max-height: min(85vw, 65vh);
             aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
@@ -105,68 +95,10 @@
             max-width: 100%;
             max-height: 100%;
         }
-        .loading-brand-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .loading-brand-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: #2D5A43;
-            font-family: 'Poppins', sans-serif;
-        }
-        .dark .loading-brand-title {
-            color: #4ade80;
-        }
-        .loading-progress-bar {
-            width: 100px;
-            height: 3px;
-            background: rgba(45, 90, 67, 0.15);
-            border-radius: 9999px;
-            overflow: hidden;
-            position: relative;
-        }
-        .dark .loading-progress-bar {
-            background: rgba(255, 255, 255, 0.12);
-        }
-        .loading-progress-fill {
-            height: 100%;
-            width: 40%;
-            background: linear-gradient(90deg, #2D5A43, #0F766E);
-            border-radius: 9999px;
-            animation: loadingIndeterminate 1.4s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-        }
-        .dark .loading-progress-fill {
-            background: linear-gradient(90deg, #4ade80, #2dd4bf);
-        }
-        @keyframes loadingIndeterminate {
-            0% {
-                transform: translateX(-100%) scaleX(0.2);
-            }
-            50% {
-                transform: translateX(100%) scaleX(1);
-            }
-            100% {
-                transform: translateX(250%) scaleX(0.2);
-            }
-        }
         @media (max-height: 500px) {
-            .loading-content-wrap {
-                gap: 0.5rem;
-            }
             .loading-lottie-wrap {
-                width: clamp(100px, 32vh, 150px);
-                height: clamp(100px, 32vh, 150px);
-            }
-            .loading-brand-title {
-                font-size: 0.875rem;
-            }
-            .loading-progress-bar {
-                width: 75px;
-                height: 2px;
+                width: clamp(120px, 50vh, 180px);
+                height: clamp(120px, 50vh, 180px);
             }
         }
         /* ══ END LOADING SCREEN ══ */
@@ -441,28 +373,7 @@
 </head>
 <body class="transition-all duration-300">
 
-    {{-- ═══════════ LOADING SCREEN (All Devices, First Visit) ═══════════ --}}
-    <div id="loading-screen" role="status" aria-live="polite">
-        <div class="loading-content-wrap">
-            <div class="loading-lottie-wrap">
-                <dotlottie-player
-                    id="lottiePlayer"
-                    src="{{ asset('assets/loading.lottie') }}"
-                    autoplay
-                    loop
-                    speed="1.7"
-                    direction="1"
-                    mode="bounce"
-                ></dotlottie-player>
-            </div>
-            <div class="loading-brand-wrap">
-                <span class="loading-brand-title">MahabBa</span>
-                <div class="loading-progress-bar">
-                    <div class="loading-progress-fill"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-loading-screen />
 
     <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-50 hidden" onclick="toggleSidebar()"></div>
 
