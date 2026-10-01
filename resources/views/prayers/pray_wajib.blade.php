@@ -42,6 +42,107 @@
     .dark .progress-fill { background: #2dd4bf; }
     
     #weeklyScheduleModal.active { display: block !important; }
+
+    /* ══════════ PRAYER CARD STYLES ══════════ */
+    .prayer-card {
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .prayer-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .prayer-card:active {
+        transform: translateY(0px) scale(0.98);
+    }
+    .dark .prayer-card:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    /* Checkmark icon animation */
+    .prayer-card .check-badge {
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .prayer-card.completed .check-badge {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Ripple effect on click */
+    @keyframes ripple {
+        from { transform: scale(0); opacity: 0.4; }
+        to { transform: scale(4); opacity: 0; }
+    }
+    .prayer-card .ripple-effect {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        width: 50px;
+        height: 50px;
+        pointer-events: none;
+        animation: ripple 0.6s ease-out forwards;
+    }
+
+    /* Tab styles */
+    .tab-btn {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .tab-btn::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 70%;
+        height: 3px;
+        background: #1D3557;
+        border-radius: 2px;
+        transition: transform 0.3s ease;
+    }
+    .dark .tab-btn::after {
+        background: #2dd4bf;
+    }
+    .tab-btn.active::after {
+        transform: translateX(-50%) scaleX(1);
+    }
+
+    /* Weekly table enhancements */
+    .weekly-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .weekly-table th {
+        border-bottom: 2px solid #E3D4C1;
+    }
+    .dark .weekly-table th {
+        border-bottom-color: #374151;
+    }
+    .weekly-table td {
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .dark .weekly-table td {
+        border-bottom-color: #1f2937;
+    }
+    .weekly-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Prayer emoji glow */
+    .prayer-emoji {
+        font-size: 1.5rem;
+        filter: grayscale(0.2);
+        transition: all 0.3s ease;
+    }
+    .prayer-card.completed .prayer-emoji {
+        filter: grayscale(0) brightness(1.1);
+        transform: scale(1.1);
+    }
 </style>
 @endpush
 
@@ -129,12 +230,49 @@
         }
         
         $percent = $maxChecks > 0 ? min(100, round(($totalChecks / $maxChecks) * 100)) : 0;
+
+        // Today's data for cards
+        $todayDate = $targetDate->format('Y-m-d');
+        $todayLog = $logs[$todayDate] ?? null;
+        $isTodayFuture = $targetDate->isFuture();
+
+        $prayers = [
+            ['key' => 'fajr', 'name' => 'Subuh', 'time' => '04:30', 'emoji' => '🌅', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+            ['key' => 'dhuhr', 'name' => 'Dzuhur', 'time' => '11:45', 'emoji' => '☀️', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+            ['key' => 'asr', 'name' => 'Asar', 'time' => '15:00', 'emoji' => '🌤️', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+            ['key' => 'maghrib', 'name' => 'Maghrib', 'time' => '17:45', 'emoji' => '🌇', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+            ['key' => 'isha', 'name' => 'Isya', 'time' => '19:00', 'emoji' => '🌙', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+        ];
     @endphp
 
     <div class="dashboard-grid" x-data="prayerTracker({{ $totalChecks }})">
         
         <div class="widget-box" style="padding: 0; overflow: hidden; border: none;">
             <div class="bg-white dark:bg-[#1e1e1e] flex flex-col">
+
+                {{-- ══════════ TAB TOGGLE ══════════ --}}
+                <div class="bg-white dark:bg-[#1e1e1e] border-b border-gray-100 dark:border-gray-700">
+                    <div class="flex items-center justify-center gap-1 p-2" x-data="{ activeTab: 'today' }" id="tabContainer">
+                        <button @click="activeTab = 'today'; $dispatch('tab-changed', { tab: 'today' })" 
+                                class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                                :class="activeTab === 'today' 
+                                    ? 'bg-[#1D3557] dark:bg-teal-600 text-white shadow-md' 
+                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'"
+                                >
+                            <i class="fas fa-sun mr-1.5"></i> Hari Ini
+                        </button>
+                        <button @click="activeTab = 'weekly'; $dispatch('tab-changed', { tab: 'weekly' })" 
+                                class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+                                :class="activeTab === 'weekly' 
+                                    ? 'bg-[#1D3557] dark:bg-teal-600 text-white shadow-md' 
+                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50'"
+                                >
+                            <i class="fas fa-calendar-week mr-1.5"></i> Riwayat Mingguan
+                        </button>
+                    </div>
+                </div>
+
+                {{-- ══════════ HEADER BAR (Shared) ══════════ --}}
                 <div class="bg-[#1D3557] dark:bg-[#1a2f23] h-20 flex text-white relative shadow-sm transition-colors duration-300">
                     <div class="w-16 md:w-24 border-r border-blue-400/30 dark:border-teal-400/20 flex flex-col justify-center items-center bg-[#162A45] dark:bg-[#121c16]">
                         <span class="text-[10px] opacity-70 uppercase tracking-widest">Week</span>
@@ -153,55 +291,163 @@
                     </div>
                 </div>
 
-                <div class="flex w-full">
-                    <div class="w-16 md:w-24 flex flex-col py-6 space-y-4 items-center bg-[#f8f9fa] dark:bg-[#1a1a1a] border-r border-gray-100 dark:border-gray-700 shrink-0">
-                        @foreach(['Subuh', 'Dzuhur', 'Asar', 'Maghrib', 'Isya'] as $p)
-                            <div class="h-10 flex items-center justify-center font-bold text-[#5A4635] dark:text-gray-200 text-sm">{{ $p }}</div>
-                        @endforeach
-                    </div>
-                    <div class="flex-1 py-6 relative overflow-x-auto dark:bg-[#121212]">
-                        <div class="w-full grid transition-all duration-300 px-2 min-w-[300px]" :class="expanded ? 'grid-cols-7' : 'grid-cols-1'">
-                            @foreach(['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'] as $index => $dayName)
-                                @php 
-                                    $date = $startOfWeek->copy()->addDays($index);
-                                    $isActiveDay = $date->isSameDay($targetDate);
-                                    $isFuture = $date->isFuture(); 
-                                    $dbDate = $date->format('Y-m-d');
-                                    $log = $logs[$dbDate] ?? null;
-                                @endphp
-                                
-                                <div class="flex flex-col space-y-4 items-center transition-all duration-300 min-h-[300px]"
-                                        x-show="expanded || {{ $isActiveDay ? 'true' : 'false' }}"
-                                        :class="{ 
-                                        'bg-[#E3D4C1]/30 -my-6 py-6 border-x border-[#D6C7B4]': {{ $isActiveDay ? 'true' : 'false' }} && expanded
-                                        }">
-                                    
-                                    @foreach(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as $prayer)
-                                        <div class="h-10 flex items-center justify-center w-full">
-                                            @if($isFuture)
-                                                <div class="w-8 h-8 rounded-full border-[2px] border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed" title="Belum waktunya"></div>
-                                            @else
-                                                <label class="cursor-pointer relative block w-8 h-8 hover:scale-110 transition-transform">
-                                                    <input type="checkbox" 
-                                                            class="peer appearance-none w-full h-full border-[3px] border-[#d4a373] dark:border-teal-600 rounded-full checked:bg-[#d4a373] dark:checked:bg-teal-500 transition-all bg-white dark:bg-gray-800 shadow-sm"
-                                                            {{ ($log && $log->$prayer) ? 'checked' : '' }}
-                                                            @change="updatePrayer('{{ $dbDate }}', '{{ $prayer }}', $event.target.checked)">
-                                                    <i class="fas fa-check text-white text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                                </label>
-                                            @endif
-                                        </div>
-                                    @endforeach
+                {{-- ══════════ TAMPILAN 1: HARI INI (Interactive Cards) ══════════ --}}
+                <div x-show="currentTab === 'today'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="p-4 md:p-6">
 
+                    {{-- Today's prayer completion summary --}}
+                    <div class="text-center mb-5">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            <i class="far fa-check-circle mr-1"></i>
+                            <span x-text="todayCount"></span> dari 5 waktu terlaksana hari ini
+                        </p>
+                    </div>
+
+                    {{-- Cards Grid: 3 on top, 2 centered below on desktop --}}
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        {{-- Row 1: First 3 prayers --}}
+                        <div class="flex flex-col md:flex-row gap-3 md:gap-4 md:justify-center">
+                            @foreach(array_slice($prayers, 0, 3) as $p)
+                                @php $isChecked = $todayLog && $todayLog->{$p['key']}; @endphp
+                                <div class="prayer-card flex-1 md:max-w-[220px] rounded-xl shadow-md overflow-hidden {{ $isChecked ? 'completed' : '' }}"
+                                     :class="prayerStates['{{ $p['key'] }}'] ? 'bg-[#1D3557] dark:bg-teal-700' : 'bg-white dark:bg-[#252525]'"
+                                     @click="togglePrayerCard('{{ $todayDate }}', '{{ $p['key'] }}')"
+                                     x-data="{ rippleX: 0, rippleY: 0, showRipple: false }">
+                                    
+                                    {{-- Hidden checkbox preserving original functionality --}}
+                                    <input type="checkbox" class="hidden prayer-checkbox" 
+                                           id="prayer_{{ $p['key'] }}"
+                                           {{ $isChecked ? 'checked' : '' }}
+                                           @change="updatePrayer('{{ $todayDate }}', '{{ $p['key'] }}', $event.target.checked)">
+
+                                    <div class="flex items-center justify-between px-4 py-4 md:py-5 relative overflow-hidden">
+                                        <div class="flex items-center gap-3">
+                                            <span class="prayer-emoji">{{ $p['emoji'] }}</span>
+                                            <div>
+                                                <h3 class="text-base md:text-lg font-bold transition-colors duration-300"
+                                                    :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-800 dark:text-gray-100'">
+                                                    {{ $p['name'] }}
+                                                </h3>
+                                                <p class="text-xs md:text-sm transition-colors duration-300"
+                                                   :class="prayerStates['{{ $p['key'] }}'] ? 'text-blue-200 dark:text-teal-200' : 'text-gray-500 dark:text-gray-400'"
+                                                   x-text="prayerTimesData['{{ $p['key'] }}'] || '—'">
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {{-- Checkmark badge --}}
+                                        <div class="check-badge w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                                             :class="prayerStates['{{ $p['key'] }}'] 
+                                                 ? 'bg-white/25 check-badge-visible' 
+                                                 : 'bg-gray-100 dark:bg-gray-700'"
+                                             :style="prayerStates['{{ $p['key'] }}'] ? 'opacity:1; transform:scale(1)' : 'opacity:0.4; transform:scale(0.8)'">
+                                            <i class="fas fa-check text-xs transition-colors duration-300"
+                                               :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-300 dark:text-gray-600'"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        {{-- Row 2: Last 2 prayers (centered) --}}
+                        <div class="flex flex-col md:flex-row gap-3 md:gap-4 md:justify-center">
+                            @foreach(array_slice($prayers, 3, 2) as $p)
+                                @php $isChecked = $todayLog && $todayLog->{$p['key']}; @endphp
+                                <div class="prayer-card flex-1 md:max-w-[220px] rounded-xl shadow-md overflow-hidden {{ $isChecked ? 'completed' : '' }}"
+                                     :class="prayerStates['{{ $p['key'] }}'] ? 'bg-[#1D3557] dark:bg-teal-700' : 'bg-white dark:bg-[#252525]'"
+                                     @click="togglePrayerCard('{{ $todayDate }}', '{{ $p['key'] }}')"
+                                     x-data="{ rippleX: 0, rippleY: 0, showRipple: false }">
+                                    
+                                    {{-- Hidden checkbox preserving original functionality --}}
+                                    <input type="checkbox" class="hidden prayer-checkbox" 
+                                           id="prayer_{{ $p['key'] }}"
+                                           {{ $isChecked ? 'checked' : '' }}
+                                           @change="updatePrayer('{{ $todayDate }}', '{{ $p['key'] }}', $event.target.checked)">
+
+                                    <div class="flex items-center justify-between px-4 py-4 md:py-5 relative overflow-hidden">
+                                        <div class="flex items-center gap-3">
+                                            <span class="prayer-emoji">{{ $p['emoji'] }}</span>
+                                            <div>
+                                                <h3 class="text-base md:text-lg font-bold transition-colors duration-300"
+                                                    :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-800 dark:text-gray-100'">
+                                                    {{ $p['name'] }}
+                                                </h3>
+                                                <p class="text-xs md:text-sm transition-colors duration-300"
+                                                   :class="prayerStates['{{ $p['key'] }}'] ? 'text-blue-200 dark:text-teal-200' : 'text-gray-500 dark:text-gray-400'"
+                                                   x-text="prayerTimesData['{{ $p['key'] }}'] || '—'">
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {{-- Checkmark badge --}}
+                                        <div class="check-badge w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
+                                             :class="prayerStates['{{ $p['key'] }}'] 
+                                                 ? 'bg-white/25 check-badge-visible' 
+                                                 : 'bg-gray-100 dark:bg-gray-700'"
+                                             :style="prayerStates['{{ $p['key'] }}'] ? 'opacity:1; transform:scale(1)' : 'opacity:0.4; transform:scale(0.8)'">
+                                            <i class="fas fa-check text-xs transition-colors duration-300"
+                                               :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-300 dark:text-gray-600'"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                 </div>
 
-                <button @click="toggleExpanded()" class="w-full bg-[#f1f2f6] dark:bg-gray-800/80 hover:bg-[#dfe4ea] dark:hover:bg-gray-700/80 py-3 text-[#636e72] dark:text-gray-400 text-xs font-bold tracking-widest uppercase border-t border-gray-200 dark:border-gray-700 transition-colors flex items-center justify-center gap-2">
-                    <span x-text="expanded ? 'TUTUP' : 'LIHAT SATU MINGGU'"></span>
-                    <i class="fas fa-chevron-down transition-transform duration-300" :class="expanded ? 'rotate-180' : ''"></i>
-                </button>
+                {{-- ══════════ TAMPILAN 2: RIWAYAT MINGGUAN (Original Table - Beautified) ══════════ --}}
+                <div x-show="currentTab === 'weekly'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+
+                    <div class="flex w-full">
+                        <div class="w-16 md:w-24 flex flex-col py-6 space-y-4 items-center bg-[#f8f9fa] dark:bg-[#1a1a1a] border-r border-gray-100 dark:border-gray-700 shrink-0">
+                            @foreach(['Subuh', 'Dzuhur', 'Asar', 'Maghrib', 'Isya'] as $p)
+                                <div class="h-10 flex items-center justify-center font-bold text-[#5A4635] dark:text-gray-200 text-sm">{{ $p }}</div>
+                            @endforeach
+                        </div>
+                        <div class="flex-1 py-6 relative overflow-x-auto dark:bg-[#121212]">
+                            <div class="w-full grid transition-all duration-300 px-2 min-w-[300px]" :class="expanded ? 'grid-cols-7' : 'grid-cols-1'">
+                                @foreach(['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'] as $index => $dayName)
+                                    @php 
+                                        $date = $startOfWeek->copy()->addDays($index);
+                                        $isActiveDay = $date->isSameDay($targetDate);
+                                        $isFuture = $date->isFuture(); 
+                                        $dbDate = $date->format('Y-m-d');
+                                        $log = $logs[$dbDate] ?? null;
+                                    @endphp
+                                    
+                                    <div class="flex flex-col space-y-4 items-center transition-all duration-300 min-h-[300px]"
+                                            x-show="expanded || {{ $isActiveDay ? 'true' : 'false' }}"
+                                            :class="{ 
+                                            'bg-[#E3D4C1]/30 -my-6 py-6 border-x border-[#D6C7B4]': {{ $isActiveDay ? 'true' : 'false' }} && expanded
+                                            }">
+                                        
+                                        @foreach(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as $prayer)
+                                            <div class="h-10 flex items-center justify-center w-full">
+                                                @if($isFuture)
+                                                    <div class="w-8 h-8 rounded-full border-[2px] border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed" title="Belum waktunya"></div>
+                                                @else
+                                                    <label class="cursor-pointer relative block w-8 h-8 hover:scale-110 transition-transform">
+                                                        <input type="checkbox" 
+                                                                class="peer appearance-none w-full h-full border-[3px] border-[#d4a373] dark:border-teal-600 rounded-full checked:bg-[#d4a373] dark:checked:bg-teal-500 transition-all bg-white dark:bg-gray-800 shadow-sm"
+                                                                {{ ($log && $log->$prayer) ? 'checked' : '' }}
+                                                                @change="updatePrayer('{{ $dbDate }}', '{{ $prayer }}', $event.target.checked)">
+                                                        <i class="fas fa-check text-white text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                                    </label>
+                                                @endif
+                                            </div>
+                                        @endforeach
+
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="toggleExpanded()" class="w-full bg-[#f1f2f6] dark:bg-gray-800/80 hover:bg-[#dfe4ea] dark:hover:bg-gray-700/80 py-3 text-[#636e72] dark:text-gray-400 text-xs font-bold tracking-widest uppercase border-t border-gray-200 dark:border-gray-700 transition-colors flex items-center justify-center gap-2">
+                        <span x-text="expanded ? 'TUTUP' : 'LIHAT SATU MINGGU'"></span>
+                        <i class="fas fa-chevron-down transition-transform duration-300" :class="expanded ? 'rotate-180' : ''"></i>
+                    </button>
+                </div>
+
             </div>
         </div>
 
@@ -355,12 +601,106 @@
 
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             daysInMonth: [], blanks: [], hijriData: [],
+
+            // ═══ NEW: Tab & Card state ═══
+            currentTab: 'today',
+            prayerStates: {
+                fajr: {{ ($todayLog && $todayLog->fajr) ? 'true' : 'false' }},
+                dhuhr: {{ ($todayLog && $todayLog->dhuhr) ? 'true' : 'false' }},
+                asr: {{ ($todayLog && $todayLog->asr) ? 'true' : 'false' }},
+                maghrib: {{ ($todayLog && $todayLog->maghrib) ? 'true' : 'false' }},
+                isha: {{ ($todayLog && $todayLog->isha) ? 'true' : 'false' }},
+            },
+            prayerTimesData: {
+                fajr: '—',
+                dhuhr: '—',
+                asr: '—',
+                maghrib: '—',
+                isha: '—',
+            },
+
+            get todayCount() {
+                return Object.values(this.prayerStates).filter(v => v).length;
+            },
             
             init() { 
                 this.generateCalendar();
                 // Set initial percent instantly
                 this.percent = Math.round((this.count / 35) * 100);
+
+                // Listen for tab changes
+                this.$el.addEventListener('tab-changed', (e) => {
+                    this.currentTab = e.detail.tab;
+                });
+
+                // Fetch prayer times from API for today's cards
+                this.fetchTodayPrayerTimes();
             },
+
+            async fetchTodayPrayerTimes() {
+                try {
+                    const lat = -7.7956;
+                    const lng = 110.3695;
+
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (pos) => this.loadPrayerTimes(pos.coords.latitude, pos.coords.longitude),
+                            () => this.loadPrayerTimes(lat, lng)
+                        );
+                    } else {
+                        this.loadPrayerTimes(lat, lng);
+                    }
+                } catch(e) {
+                    console.error('Prayer times fetch error:', e);
+                }
+            },
+
+            async loadPrayerTimes(lat, lng) {
+                try {
+                    const today = new Date();
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const yyyy = today.getFullYear();
+                    const res = await fetch(`https://api.aladhan.com/v1/timings/${dd}-${mm}-${yyyy}?latitude=${lat}&longitude=${lng}&method=20`);
+                    const data = await res.json();
+                    const t = data.data.timings;
+                    this.prayerTimesData = {
+                        fajr: t.Fajr.split(' ')[0],
+                        dhuhr: t.Dhuhr.split(' ')[0],
+                        asr: t.Asr.split(' ')[0],
+                        maghrib: t.Maghrib.split(' ')[0],
+                        isha: t.Isha.split(' ')[0],
+                    };
+                } catch(e) {
+                    console.error('Failed to load prayer times:', e);
+                }
+            },
+
+            togglePrayerCard(date, prayer) {
+                // Toggle the state
+                this.prayerStates[prayer] = !this.prayerStates[prayer];
+                const newStatus = this.prayerStates[prayer];
+
+                // Update the hidden checkbox
+                const cb = document.getElementById('prayer_' + prayer);
+                if (cb) {
+                    cb.checked = newStatus;
+                }
+
+                // Add/remove card completed class
+                const card = cb ? cb.closest('.prayer-card') : null;
+                if (card) {
+                    if (newStatus) {
+                        card.classList.add('completed');
+                    } else {
+                        card.classList.remove('completed');
+                    }
+                }
+
+                // Use the existing updatePrayer to save to backend
+                this.updatePrayer(date, prayer, newStatus);
+            },
+
             toggleExpanded() { this.expanded = !this.expanded; },
             
             animateProgress() {
