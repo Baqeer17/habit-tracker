@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>MahabBa</title>
         <!-- PWA Manifest & Favicons -->
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icon.png') }}?v=2">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icon.png') }}?v=2">

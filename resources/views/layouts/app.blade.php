@@ -6,7 +6,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@yield('title', 'MahabBa')</title>
 
     <!-- PWA Manifest & Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icon.png') }}?v=2">
