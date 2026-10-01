@@ -45,6 +45,9 @@ RUN npm install && npm run build
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Buat symlink agar public/storage terhubung ke storage/app/public
+RUN php artisan storage:link
+
 # Buka akses Port 80 untuk lalu lintas HTTP
 EXPOSE 80
 
