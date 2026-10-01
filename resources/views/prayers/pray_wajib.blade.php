@@ -133,15 +133,50 @@
         border-bottom: none;
     }
 
-    /* Prayer emoji glow */
-    .prayer-emoji {
-        font-size: 1.5rem;
-        filter: grayscale(0.2);
-        transition: all 0.3s ease;
+    /* Weekly checkbox fix - ensure checkmark is centered */
+    .weekly-checkbox-wrap {
+        position: relative;
+        width: 32px;
+        height: 32px;
     }
-    .prayer-card.completed .prayer-emoji {
-        filter: grayscale(0) brightness(1.1);
+    .weekly-checkbox-wrap input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        height: 100%;
+        border: 3px solid #d4a373;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .dark .weekly-checkbox-wrap input[type="checkbox"] {
+        border-color: #0d9488;
+        background: #1f2937;
+    }
+    .weekly-checkbox-wrap input[type="checkbox"]:checked {
+        background: #d4a373;
+    }
+    .dark .weekly-checkbox-wrap input[type="checkbox"]:checked {
+        background: #14b8a6;
+    }
+    .weekly-checkbox-wrap input[type="checkbox"]:hover {
         transform: scale(1.1);
+    }
+    .weekly-checkbox-wrap .check-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 11px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    .weekly-checkbox-wrap input[type="checkbox"]:checked ~ .check-icon {
+        opacity: 1;
     }
 </style>
 @endpush
@@ -237,11 +272,11 @@
         $isTodayFuture = $targetDate->isFuture();
 
         $prayers = [
-            ['key' => 'fajr', 'name' => 'Subuh', 'time' => '04:30', 'emoji' => '🌅', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
-            ['key' => 'dhuhr', 'name' => 'Dzuhur', 'time' => '11:45', 'emoji' => '☀️', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
-            ['key' => 'asr', 'name' => 'Asar', 'time' => '15:00', 'emoji' => '🌤️', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
-            ['key' => 'maghrib', 'name' => 'Maghrib', 'time' => '17:45', 'emoji' => '🌇', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
-            ['key' => 'isha', 'name' => 'Isya', 'time' => '19:00', 'emoji' => '🌙', 'gradient_from' => '#1D3557', 'gradient_to' => '#264573'],
+            ['key' => 'fajr', 'name' => 'Subuh', 'icon' => 'fa-cloud-sun'],
+            ['key' => 'dhuhr', 'name' => 'Dzuhur', 'icon' => 'fa-sun'],
+            ['key' => 'asr', 'name' => 'Asar', 'icon' => 'fa-cloud'],
+            ['key' => 'maghrib', 'name' => 'Maghrib', 'icon' => 'fa-moon'],
+            ['key' => 'isha', 'name' => 'Isya', 'icon' => 'fa-star'],
         ];
     @endphp
 
@@ -279,11 +314,13 @@
                         <span class="text-lg font-bold">{{ $targetDate->weekOfYear }}</span>
                     </div>
                     <div class="flex-1 flex items-center justify-center px-4">
-                        <div x-show="!expanded" class="text-xl font-bold tracking-wide flex items-center gap-2">
+                        {{-- Show date when on Hari Ini tab OR when weekly is collapsed --}}
+                        <div x-show="currentTab === 'today' || !expanded" class="text-xl font-bold tracking-wide flex items-center gap-2">
                             <i class="far fa-calendar-alt opacity-70"></i>
                             {{ $targetDate->translatedFormat('l, d M Y') }}
                         </div>
-                        <div x-show="expanded" class="w-full grid grid-cols-7 text-center pl-2">
+                        {{-- Show day columns only when weekly tab is expanded --}}
+                        <div x-show="currentTab === 'weekly' && expanded" class="w-full grid grid-cols-7 text-center pl-2">
                             @foreach(['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Ahd'] as $day)
                                 <div class="text-sm font-semibold opacity-90">{{ $day }}</div>
                             @endforeach
@@ -321,7 +358,11 @@
 
                                     <div class="flex items-center justify-between px-4 py-4 md:py-5 relative overflow-hidden">
                                         <div class="flex items-center gap-3">
-                                            <span class="prayer-emoji">{{ $p['emoji'] }}</span>
+                                            <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300"
+                                                 :class="prayerStates['{{ $p['key'] }}'] ? 'bg-white/20' : 'bg-[#1D3557]/10 dark:bg-teal-500/10'">
+                                                <i class="fas {{ $p['icon'] }} text-sm transition-colors duration-300"
+                                                   :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-[#1D3557] dark:text-teal-400'"></i>
+                                            </div>
                                             <div>
                                                 <h3 class="text-base md:text-lg font-bold transition-colors duration-300"
                                                     :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-800 dark:text-gray-100'">
@@ -365,7 +406,11 @@
 
                                     <div class="flex items-center justify-between px-4 py-4 md:py-5 relative overflow-hidden">
                                         <div class="flex items-center gap-3">
-                                            <span class="prayer-emoji">{{ $p['emoji'] }}</span>
+                                            <div class="w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300"
+                                                 :class="prayerStates['{{ $p['key'] }}'] ? 'bg-white/20' : 'bg-[#1D3557]/10 dark:bg-teal-500/10'">
+                                                <i class="fas {{ $p['icon'] }} text-sm transition-colors duration-300"
+                                                   :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-[#1D3557] dark:text-teal-400'"></i>
+                                            </div>
                                             <div>
                                                 <h3 class="text-base md:text-lg font-bold transition-colors duration-300"
                                                     :class="prayerStates['{{ $p['key'] }}'] ? 'text-white' : 'text-gray-800 dark:text-gray-100'">
@@ -425,13 +470,12 @@
                                                 @if($isFuture)
                                                     <div class="w-8 h-8 rounded-full border-[2px] border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 opacity-50 cursor-not-allowed" title="Belum waktunya"></div>
                                                 @else
-                                                    <label class="cursor-pointer relative block w-8 h-8 hover:scale-110 transition-transform">
+                                                    <div class="weekly-checkbox-wrap hover:scale-110 transition-transform" data-date="{{ $dbDate }}" data-prayer="{{ $prayer }}">
                                                         <input type="checkbox" 
-                                                                class="peer appearance-none w-full h-full border-[3px] border-[#d4a373] dark:border-teal-600 rounded-full checked:bg-[#d4a373] dark:checked:bg-teal-500 transition-all bg-white dark:bg-gray-800 shadow-sm"
                                                                 {{ ($log && $log->$prayer) ? 'checked' : '' }}
                                                                 @change="updatePrayer('{{ $dbDate }}', '{{ $prayer }}', $event.target.checked)">
-                                                        <i class="fas fa-check text-white text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100 transition-opacity"></i>
-                                                    </label>
+                                                        <i class="fas fa-check check-icon"></i>
+                                                    </div>
                                                 @endif
                                             </div>
                                         @endforeach
@@ -681,7 +725,7 @@
                 this.prayerStates[prayer] = !this.prayerStates[prayer];
                 const newStatus = this.prayerStates[prayer];
 
-                // Update the hidden checkbox
+                // Update the hidden checkbox in the card
                 const cb = document.getElementById('prayer_' + prayer);
                 if (cb) {
                     cb.checked = newStatus;
@@ -694,6 +738,15 @@
                         card.classList.add('completed');
                     } else {
                         card.classList.remove('completed');
+                    }
+                }
+
+                // ═══ SYNC: Also update the matching checkbox in the weekly table ═══
+                const weeklyWrap = document.querySelector(`.weekly-checkbox-wrap[data-date="${date}"][data-prayer="${prayer}"]`);
+                if (weeklyWrap) {
+                    const weeklyCb = weeklyWrap.querySelector('input[type="checkbox"]');
+                    if (weeklyCb) {
+                        weeklyCb.checked = newStatus;
                     }
                 }
 
