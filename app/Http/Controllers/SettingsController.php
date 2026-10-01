@@ -62,7 +62,7 @@ class SettingsController extends Controller
             'tahajud_time'      => 'sometimes|nullable|string',
             'duha_time'         => 'sometimes|nullable|string',
             'tilawah_time'      => 'sometimes|nullable|string',
-            'avatar'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:3072',
+            'avatar'            => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         // Handle remove avatar

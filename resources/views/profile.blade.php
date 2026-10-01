@@ -61,7 +61,7 @@
                 </div>
 
                 {{-- Bio / Update Section --}}
-                <form action="{{ route('profile.update') }}" method="POST" class="bg-white dark:bg-[#1e1e1e] backdrop-blur-sm rounded-[25px] p-6 shadow-sm border border-white dark:border-gray-700 relative transition-colors">
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="bg-white dark:bg-[#1e1e1e] backdrop-blur-sm rounded-[25px] p-6 shadow-sm border border-white dark:border-gray-700 relative transition-colors">
                     @csrf
                     <h3 style="font-size: 16px;" class="font-black text-gray-800 dark:text-gray-100 mb-4">Profil & Bio</h3>
                     <div class="space-y-3">
@@ -70,13 +70,18 @@
                             <input type="text" name="name" value="{{ $user->name }}" class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 focus:border-teal-600 dark:focus:border-teal-400 outline-none pb-1 font-black text-gray-700 dark:text-gray-200 transition-all" style="font-size: 12px;">
                         </div>
                         <div>
+                            <label style="font-size: 9px;" class="block font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 opacity-60">Foto Profil (Max 2.097.152 bytes / 2MB)</label>
+                            <input type="file" name="avatar" id="avatarInput" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 dark:file:bg-teal-900/30 dark:file:text-teal-400 hover:file:bg-teal-100 dark:hover:file:bg-teal-900/50 transition-all cursor-pointer">
+                            <p id="avatarError" class="text-red-500 dark:text-red-400 font-bold mt-2 hidden" style="font-size: 10px;"></p>
+                        </div>
+                        <div>
                             <label style="font-size: 9px;" class="block font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1 opacity-60">Personal Bio</label>
                             <textarea name="bio" placeholder="Tuliskan perjalanan spiritualmu..." class="w-full bg-transparent border-b border-gray-100 dark:border-gray-700 focus:border-teal-600 dark:focus:border-teal-400 outline-none pb-1 font-bold text-gray-500 dark:text-gray-400 min-h-[60px] resize-none leading-relaxed transition-all" style="font-size: 12px;">{{ $user->bio }}</textarea>
                         </div>
                     </div>
                     
                     <div class="mt-4 flex justify-end">
-                        <button type="submit" class="bg-[#0F766E] dark:bg-teal-600 text-white dark:text-gray-100 px-5 py-2 rounded-lg font-black hover:bg-teal-800 dark:hover:bg-teal-500 transition-all shadow-md shadow-teal-900/10 active:scale-95 uppercase tracking-widest" style="font-size: 10px;">
+                        <button type="submit" id="btnSubmitProfile" class="bg-[#0F766E] dark:bg-teal-600 text-white dark:text-gray-100 px-5 py-2 rounded-lg font-black hover:bg-teal-800 dark:hover:bg-teal-500 transition-all shadow-md shadow-teal-900/10 active:scale-95 uppercase tracking-widest" style="font-size: 10px;">
                             Simpan Perubahan
                         </button>
                     </div>
@@ -86,3 +91,34 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const errorMsg = document.getElementById('avatarError');
+        const submitBtn = document.getElementById('btnSubmitProfile');
+        
+        if (file) {
+            const maxSize = 2097152; // 2MB in bytes
+            if (file.size > maxSize) {
+                errorMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> Gagal! Ukuran file <b>${file.size.toLocaleString()} bytes</b>. Maksimal yang diizinkan adalah <b>2.097.152 bytes</b> (2MB).`;
+                errorMsg.classList.remove('hidden');
+                e.target.value = ''; // Reset input agar tidak bisa disubmit
+                
+                // Disable submit button
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                submitBtn.classList.remove('hover:bg-teal-800', 'dark:hover:bg-teal-500', 'active:scale-95');
+            } else {
+                errorMsg.classList.add('hidden');
+                
+                // Enable submit button
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitBtn.classList.add('hover:bg-teal-800', 'dark:hover:bg-teal-500', 'active:scale-95');
+            }
+        }
+    });
+</script>
+@endpush

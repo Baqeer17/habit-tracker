@@ -31,7 +31,15 @@ class ProfileController extends Controller
             'name' => 'required|string|max:255',
             'bio' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:20',
+            'avatar' => 'nullable|image|max:2048', // max 2MB
         ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar && !\Illuminate\Support\Str::startsWith($user->avatar, 'http')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            }
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
 
         $user->update($data);
 

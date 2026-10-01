@@ -429,12 +429,32 @@
                                 <div class="avatar-badge" title="Ganti/Ambil Foto Profil">
                                     <i class="fa-solid fa-camera"></i>
                                 </div>
-                                <input x-ref="avatarFile" type="file" name="avatar" accept="image/*" capture="user" style="display:none;" @change="avatarPreview = URL.createObjectURL($event.target.files[0]); removeAvatar = false">
+                                <input x-ref="avatarFile" type="file" name="avatar" accept="image/*" capture="user" style="display:none;" 
+                                    @change="
+                                        let file = $event.target.files[0];
+                                        if (file) {
+                                            if (file.size > 2097152) {
+                                                $refs.avatarError.innerHTML = '<i class=\'fa-solid fa-circle-exclamation mr-1\'></i> Gagal! Ukuran <b>' + file.size.toLocaleString() + ' bytes</b>. Maks <b>2MB</b>.';
+                                                $refs.avatarError.style.display = 'block';
+                                                $event.target.value = '';
+                                                avatarPreview = null;
+                                                document.getElementById('saveSettingsBtn').disabled = true;
+                                                document.getElementById('saveSettingsBtn').style.opacity = '0.5';
+                                            } else {
+                                                $refs.avatarError.style.display = 'none';
+                                                avatarPreview = URL.createObjectURL(file);
+                                                removeAvatar = false;
+                                                document.getElementById('saveSettingsBtn').disabled = false;
+                                                document.getElementById('saveSettingsBtn').style.opacity = '1';
+                                            }
+                                        }
+                                    ">
                             </label>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <span style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#9ca3af;">Foto Profil</span>
+                                <span style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#9ca3af;">Foto Profil (Max 2MB)</span>
+                                <div x-ref="avatarError" style="display:none; color:#ef4444; font-size:10px; font-weight:700; margin-top:4px; text-align:center; max-width: 150px; line-height: 1.2;"></div>
                                 <div x-show="(('{{ Auth::user()->avatar }}' != '') || avatarPreview) && !removeAvatar" style="margin-top:4px;" x-cloak>
-                                    <button type="button" @click.prevent="removeAvatar = true; avatarPreview = null; $refs.avatarFile.value = ''" style="font-size:10px; font-weight:700; color:#ef4444; background:rgba(239,68,68,0.1); padding:2px 6px; border-radius:4px; border:none; cursor:pointer;" class="dark:bg-red-900/30 hover:bg-red-100 transition-colors"><i class="fa-solid fa-trash-can" style="margin-right:4px;"></i>Hapus</button>
+                                    <button type="button" @click.prevent="removeAvatar = true; avatarPreview = null; $refs.avatarFile.value = ''; $refs.avatarError.style.display = 'none'; document.getElementById('saveSettingsBtn').disabled = false; document.getElementById('saveSettingsBtn').style.opacity = '1';" style="font-size:10px; font-weight:700; color:#ef4444; background:rgba(239,68,68,0.1); padding:2px 6px; border-radius:4px; border:none; cursor:pointer;" class="dark:bg-red-900/30 hover:bg-red-100 transition-colors"><i class="fa-solid fa-trash-can" style="margin-right:4px;"></i>Hapus</button>
                                 </div>
                             </div>
                             <input type="hidden" name="remove_avatar" :value="removeAvatar ? '1' : '0'">
@@ -814,7 +834,7 @@
                 <span style="font-size:12px;font-weight:600;color:#9ca3af;"
                       x-text="'Tab aktif: ' + {'akun':'Akun & Profil','personalisasi':'Personalisasi','notifikasi':'Notifikasi','privasi':'Data & Privasi','laporan':'Laporan'}[activeTab]">
                 </span>
-                <button type="submit" class="btn-save" x-show="activeTab !== 'privasi' && activeTab !== 'laporan'">
+                <button type="submit" id="saveSettingsBtn" class="btn-save" x-show="activeTab !== 'privasi' && activeTab !== 'laporan'">
                     <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>
                     Simpan Perubahan
                 </button>
