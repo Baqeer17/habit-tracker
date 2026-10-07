@@ -19,9 +19,11 @@ use App\Models\User;
 |--------------------------------------------------------------------------
 */
 
-// Auth Routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Auth Routes (Rate Limited to prevent Brute-Force)
+Route::middleware('throttle:5,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
 // Utility Routes (Jadwal Shalat)
 Route::get('/prayer-times', function (Request $request) {
@@ -88,5 +90,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/habits', [HabitController::class, 'index']);
     Route::post('/habits', [HabitController::class, 'store']);
     Route::delete('/habits/{id}', [HabitController::class, 'destroy']);
-    Route::patch('/habits/{id}/toggle', [HabitController::class, 'toggle']);
+    Route::patch('/habits/{id}/toggle', [HabitController::class, 'toggle'])->middleware('throttle:30,1');
 });

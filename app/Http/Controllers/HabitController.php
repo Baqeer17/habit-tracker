@@ -4,33 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\Habit;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class HabitController extends Controller
 {
-    // 1. Tampilkan Habit milik SAYA saja
-    public function index(Request $request)
+    // 1. Tampilkan Habit milik SAYA saja (Dioptimalkan & Anti N+1)
+    public function index(Request $request): JsonResponse
     {
-        return $request->user()->habits;
+        $habits = $request->user()
+            ->habits()
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return response()->json($habits);
     }
 
-    // 2. Tambah Habit Baru (FIX ERROR 500 DI SINI)
-    public function store(Request $request)
+    // 2. Tambah Habit Baru (Dioptimalkan & Tipe Data Terkunci)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name'        => 'required|max:255',
-            'description' => 'nullable',
-            'icon'        => 'nullable',
-            'status'      => 'nullable',
+            'name'        => 'required|string|max:255', 
+            'description' => 'nullable|string|max:1000', // Batasi length untuk mencegah payload raksasa
+            'icon'        => 'nullable|string|max:50',
+            'status'      => 'nullable|string|in:pending,done', 
         ]);
 
-        if (empty($validated['status'])) {
-            $validated['status'] = 'pending';
-        }
+        // Default 'pending' jika tidak diisi
+        $validated['status'] = $validated['status'] ?? 'pending';
 
-        // --- PERHATIKAN BAGIAN INI ---
-        // Kita tidak pakai Habit::create() biasa.
-        // Kita pakai $request->user()->habits()->create()
-        // Ini otomatis mengisi kolom 'user_id' dengan ID kamu.
+        // Aman: Eloquent otomatis menyuntikkan user_id
         $habit = $request->user()->habits()->create($validated);
 
         return response()->json([
@@ -39,34 +41,29 @@ class HabitController extends Controller
         ], 201);
     }
 
-    // 3. Hapus Habit (Milik sendiri)
-    public function destroy(Request $request, $id)
+    // 3. Hapus Habit (IDOR Patched)
+    public function destroy(Request $request, $id): JsonResponse
     {
-        $habit = $request->user()->habits()->where('id', $id)->first();
-
-        if (!$habit) {
-            return response()->json(['message' => 'Habit not found'], 404);
-        }
-
+        // IDOR PATCH: Scoping relasi akan membuang 404 jika ID habit bukan milik user tersebut
+        $habit = $request->user()->habits()->findOrFail($id);
+        
         $habit->delete();
+        
         return response()->json(['message' => 'Habit deleted successfully']);
     }
 
-    // 4. Update Status (Milik sendiri)
-    public function toggle(Request $request, $id)
+    // 4. Update Status (IDOR Patched)
+    public function toggle(Request $request, $id): JsonResponse
     {
-        $habit = $request->user()->habits()->where('id', $id)->first();
-
-        if (!$habit) {
-            return response()->json(['message' => 'Habit not found'], 404);
-        }
+        // IDOR PATCH: Validasi kepemilikan
+        $habit = $request->user()->habits()->findOrFail($id);
 
         $habit->status = ($habit->status === 'done') ? 'pending' : 'done';
         $habit->save();
 
         return response()->json([
             'message' => 'Habit status updated',
-            'data' => $habit
+            'data'    => $habit
         ]);
     }
 }
