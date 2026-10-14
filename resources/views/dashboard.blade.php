@@ -326,42 +326,62 @@
     }
 
     // --- PWA INSTALLATION LOGIC ---
-    let deferredPrompt;
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Mencegah Chrome 67 dan yang lebih lama menampilkan prompt otomatis
-        e.preventDefault();
-        // Simpan event sehingga bisa dipicu nanti
-        deferredPrompt = e;
-        
-        // Update UI beri tahu pengguna mereka dapat menginstal PWA
+    let deferredPrompt = window.pwaDeferredPrompt || null;
+
+    function showPwaBannerIfNeeded() {
         const banner = document.getElementById('pwa-install-banner');
-        if (banner && !localStorage.getItem('pwa_dismissed')) {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        if (banner && !isStandalone && !localStorage.getItem('pwa_dismissed')) {
             banner.style.display = 'flex';
-            // Perbaikan tampilan responsif dipaksa via style JS karena tailwind .hidden bentrok dengan display:flex
             banner.classList.remove('hidden');
         }
+    }
+
+    if (deferredPrompt) {
+        showPwaBannerIfNeeded();
+    }
+
+    window.addEventListener('pwa-prompt-available', (e) => {
+        deferredPrompt = e.detail || window.pwaDeferredPrompt;
+        showPwaBannerIfNeeded();
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        window.pwaDeferredPrompt = e;
+        showPwaBannerIfNeeded();
     });
 
     function installPwa() {
         const banner = document.getElementById('pwa-install-banner');
-        banner.style.display = 'none';
+        if (banner) banner.style.display = 'none';
         
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
+        const promptToUse = deferredPrompt || window.pwaDeferredPrompt;
+        if (promptToUse) {
+            promptToUse.prompt();
+            promptToUse.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('User menerima A2HS prompt');
                 } else {
                     console.log('User menolak A2HS prompt');
                 }
                 deferredPrompt = null;
+                window.pwaDeferredPrompt = null;
             });
+        } else {
+            const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+            if (isIos) {
+                alert('Untuk memasang di iPhone/iPad:\n1. Ketuk ikon Share di Safari\n2. Pilih "Tambah ke Layar Utama"');
+            } else {
+                alert('Silakan buka menu browser Anda (titik 3 di kanan atas) lalu pilih "Instal Aplikasi" atau "Tambahkan ke Layar Utama".');
+            }
         }
     }
 
     function dismissPwaInstall() {
-        document.getElementById('pwa-install-banner').style.display = 'none';
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) banner.style.display = 'none';
         localStorage.setItem('pwa_dismissed', 'yes');
     }
 

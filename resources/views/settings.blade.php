@@ -233,6 +233,39 @@
         selectedPeriod: 'bulan_ini',
         avatarPreview: null,
         removeAvatar: false,
+        isInstalled: window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true,
+        canInstall: !!window.pwaDeferredPrompt,
+        isIos: /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase()),
+        showIosGuide: false,
+        init() {
+            window.addEventListener('pwa-prompt-available', () => {
+                this.canInstall = true;
+            });
+            window.addEventListener('pwa-installed', () => {
+                this.isInstalled = true;
+                this.canInstall = false;
+            });
+        },
+        triggerInstall() {
+            if (window.pwaDeferredPrompt) {
+                window.pwaDeferredPrompt.prompt();
+                window.pwaDeferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        this.isInstalled = true;
+                    }
+                    window.pwaDeferredPrompt = null;
+                    this.canInstall = false;
+                });
+            } else if (this.isIos) {
+                this.showIosGuide = true;
+            } else {
+                alert('Untuk menginstal MahabBa:\nBuka menu titik 3 browser Anda (kanan atas) lalu pilih \'Instal MahabBa\' atau \'Tambahkan ke Layar Utama\'.');
+            }
+        },
+        resetInstallBanner() {
+            localStorage.removeItem('pwa_dismissed');
+            alert('Pengingat instalasi telah di-reset! Banner instalasi akan muncul kembali di Dashboard.');
+        },
         setTheme(val) {
             this.theme = val;
             localStorage.setItem('theme', val);
@@ -373,6 +406,7 @@
                 ['id' => 'notifikasi',    'label' => 'Notifikasi',      'icon' => 'fa-bell'],
                 ['id' => 'privasi',       'label' => 'Data & Privasi',  'icon' => 'fa-shield-halved'],
                 ['id' => 'laporan',       'label' => 'Laporan',         'icon' => 'fa-chart-bar'],
+                ['id' => 'aplikasi',      'label' => 'Instal Aplikasi', 'icon' => 'fa-mobile-screen-button'],
             ];
         @endphp
         @foreach($navItems as $item)
@@ -383,6 +417,8 @@
                 <span>{{ $item['label'] }}</span>
                 @if($item['id'] === 'laporan')
                     <span style="margin-left:auto;font-size:9px;background:rgba(15,118,110,0.15);color:#0F766E;padding:2px 8px;border-radius:99px;font-weight:900;letter-spacing:0.08em;">PDF</span>
+                @elseif($item['id'] === 'aplikasi')
+                    <span style="margin-left:auto;font-size:9px;background:rgba(15,118,110,0.15);color:#0F766E;padding:2px 8px;border-radius:99px;font-weight:900;letter-spacing:0.08em;">PWA</span>
                 @endif
             </button>
         @endforeach
@@ -563,6 +599,24 @@
                                 <div class="toggle-track"><div class="toggle-thumb"></div></div>
                             </label>
                         </div>
+                    </div>
+
+                    {{-- Shortcut PWA Install --}}
+                    <div class="settings-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,rgba(15,118,110,0.06),rgba(230,243,245,0.4));border-color:rgba(15,118,110,0.2);">
+                        <div style="display:flex;align-items:center;gap:14px;">
+                            <div style="width:42px;height:42px;border-radius:14px;background:rgba(15,118,110,0.12);color:#0F766E;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-size:13px;font-weight:800;color:#1f2937;" class="dark:text-gray-100">Aplikasi MahabBa (PWA)</h4>
+                                <p style="font-size:11px;color:#6b7280;" class="dark:text-gray-400">Instal di layar utama HP atau desktop untuk akses kilat</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="activeTab = 'aplikasi'"
+                            style="padding:9px 18px;background:#0F766E;color:white;border:none;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(15,118,110,0.25);"
+                            onmouseover="this.style.background='#0c5e58'" onmouseout="this.style.background='#0F766E'">
+                            Kelola / Pasang <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -827,14 +881,143 @@
 
                 </div>
 
+                {{-- ─────────── TAB: INSTAL APLIKASI (PWA) ─────────── --}}
+                <div x-show="activeTab === 'aplikasi'"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 translate-y-3"
+                     x-transition:enter-end="opacity-100 translate-y-0">
+
+                    {{-- Main Install Card --}}
+                    <div class="settings-card" style="background:linear-gradient(135deg,rgba(15,118,110,0.06),rgba(230,243,245,0.45));border-color:rgba(15,118,110,0.25);margin-bottom:24px;">
+                        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+                            <div style="position:relative;width:64px;height:64px;border-radius:20px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(15,118,110,0.18);border:1px solid rgba(15,118,110,0.15);flex-shrink:0;">
+                                <img src="{{ asset('icon.png') }}" alt="MahabBa Logo" style="width:48px;height:48px;border-radius:14px;object-fit:cover;">
+                                <template x-if="isInstalled">
+                                    <span style="position:absolute;bottom:-4px;right:-4px;background:#10b981;color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;border:2px solid white;" title="Terpasang">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
+                                </template>
+                            </div>
+                            <div style="flex:1;min-width:240px;">
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+                                    <h2 style="font-size:19px;font-weight:900;color:#1f2937;" class="dark:text-gray-100">Aplikasi MahabBa (PWA)</h2>
+                                    <template x-if="isInstalled">
+                                        <span style="font-size:10px;font-weight:800;background:rgba(16,185,129,0.15);color:#059669;padding:3px 10px;border-radius:99px;display:inline-flex;align-items:center;gap:4px;">
+                                            <i class="fa-solid fa-circle-check"></i> Terinstal di Perangkat Ini
+                                        </span>
+                                    </template>
+                                    <template x-if="!isInstalled">
+                                        <span style="font-size:10px;font-weight:800;background:rgba(15,118,110,0.12);color:#0F766E;padding:3px 10px;border-radius:99px;">
+                                            Siap Pasang
+                                        </span>
+                                    </template>
+                                </div>
+                                <p style="font-size:12px;color:#6b7280;font-weight:500;line-height:1.5;" class="dark:text-gray-300">
+                                    Pasang MahabBa langsung di layar beranda ponsel atau desktop Anda. Buka instan tanpa perlu repot mengetik alamat web di browser.
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Action Buttons & Status --}}
+                        <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(15,118,110,0.15);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                            <template x-if="!isInstalled">
+                                <button type="button" @click="triggerInstall()"
+                                    style="padding:13px 26px;background:#0F766E;color:white;border:none;border-radius:14px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:800;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 18px rgba(15,118,110,0.3);display:inline-flex;align-items:center;gap:10px;"
+                                    onmouseover="this.style.background='#0c5e58';this.style.transform='translateY(-1px)'"
+                                    onmouseout="this.style.background='#0F766E';this.style.transform='translateY(0)'">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Pasang Aplikasi Sekarang</span>
+                                </button>
+                            </template>
+                            <template x-if="isInstalled">
+                                <div style="display:flex;align-items:center;gap:10px;color:#059669;font-weight:700;font-size:13px;">
+                                    <i class="fa-solid fa-circle-check" style="font-size:18px;"></i>
+                                    <span>Aplikasi sudah terpasang dan berjalan dalam mode PWA.</span>
+                                </div>
+                            </template>
+                            <button type="button" @click="resetInstallBanner()"
+                                style="padding:12px 18px;background:transparent;border:1px solid #d1d5db;color:#6b7280;border-radius:14px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;"
+                                class="dark:border-gray-700 dark:text-gray-300"
+                                title="Munculkan kembali banner instalasi di dashboard jika sebelumnya pernah diklik 'Nanti'">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Banner Dashboard
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- iOS Guide Box (If on iOS or clicked) --}}
+                    <div class="settings-card" x-show="isIos || showIosGuide" style="border-left:4px solid #0F766E;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                            <i class="fa-brands fa-apple" style="font-size:22px;color:#1f2937;" class="dark:text-white"></i>
+                            <h3 style="font-size:14px;font-weight:800;color:#1f2937;" class="dark:text-gray-100">Panduan Pengguna iPhone / iPad (Safari)</h3>
+                        </div>
+                        <p style="font-size:12px;color:#6b7280;margin-bottom:16px;line-height:1.5;" class="dark:text-gray-300">
+                            Browser Safari di iOS tidak mendukung tombol pop-up otomatis, namun Anda bisa memasangnya ke layar utama dalam 3 langkah singkat:
+                        </p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+                            <div style="background:white;padding:14px;border-radius:14px;border:1px solid #e5e7eb;" class="dark:bg-gray-800/40 dark:border-gray-700">
+                                <div style="font-size:11px;font-weight:900;color:#0F766E;margin-bottom:4px;">LANGKAH 1</div>
+                                <div style="font-size:12px;font-weight:600;color:#374151;" class="dark:text-gray-200">
+                                    Ketuk tombol <strong>Share / Bagikan</strong> <i class="fa-solid fa-arrow-up-from-bracket ml-1 text-teal-700"></i> di bilah bawah browser Safari.
+                                </div>
+                            </div>
+                            <div style="background:white;padding:14px;border-radius:14px;border:1px solid #e5e7eb;" class="dark:bg-gray-800/40 dark:border-gray-700">
+                                <div style="font-size:11px;font-weight:900;color:#0F766E;margin-bottom:4px;">LANGKAH 2</div>
+                                <div style="font-size:12px;font-weight:600;color:#374151;" class="dark:text-gray-200">
+                                    Gulir ke bawah dan pilih <strong>Tambah ke Layar Utama</strong> (<em>Add to Home Screen</em>).
+                                </div>
+                            </div>
+                            <div style="background:white;padding:14px;border-radius:14px;border:1px solid #e5e7eb;" class="dark:bg-gray-800/40 dark:border-gray-700">
+                                <div style="font-size:11px;font-weight:900;color:#0F766E;margin-bottom:4px;">LANGKAH 3</div>
+                                <div style="font-size:12px;font-weight:600;color:#374151;" class="dark:text-gray-200">
+                                    Ketuk <strong>Tambah</strong> di pojok kanan atas. Ikon MahabBa siap dibuka langsung dari layar HP Anda!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Keunggulan Menginstal PWA --}}
+                    <div class="settings-card">
+                        <p class="settings-card-title">Keunggulan Aplikasi MahabBa</p>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">
+                            <div style="padding:16px;background:rgba(248,251,252,0.8);border-radius:16px;border:1px solid #e5e7eb;display:flex;gap:14px;" class="dark:bg-gray-800/30 dark:border-gray-700">
+                                <div style="width:40px;height:40px;border-radius:12px;background:rgba(15,118,110,0.1);color:#0F766E;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:13px;font-weight:800;color:#1f2937;margin-bottom:2px;" class="dark:text-gray-100">Buka Super Cepat</h4>
+                                    <p style="font-size:11px;color:#6b7280;line-height:1.4;" class="dark:text-gray-400">Aset disimpan secara lokal sehingga aplikasi terbuka seketika tanpa jeda browser.</p>
+                                </div>
+                            </div>
+                            <div style="padding:16px;background:rgba(248,251,252,0.8);border-radius:16px;border:1px solid #e5e7eb;display:flex;gap:14px;" class="dark:bg-gray-800/30 dark:border-gray-700">
+                                <div style="width:40px;height:40px;border-radius:12px;background:rgba(15,118,110,0.1);color:#0F766E;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:13px;font-weight:800;color:#1f2937;margin-bottom:2px;" class="dark:text-gray-100">Layar Penuh (Full App)</h4>
+                                    <p style="font-size:11px;color:#6b7280;line-height:1.4;" class="dark:text-gray-400">Bebas distraksi bilah URL/browser, memberikan sensasi aplikasi native yang elegan.</p>
+                                </div>
+                            </div>
+                            <div style="padding:16px;background:rgba(248,251,252,0.8);border-radius:16px;border:1px solid #e5e7eb;display:flex;gap:14px;" class="dark:bg-gray-800/30 dark:border-gray-700">
+                                <div style="width:40px;height:40px;border-radius:12px;background:rgba(15,118,110,0.1);color:#0F766E;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size:13px;font-weight:800;color:#1f2937;margin-bottom:2px;" class="dark:text-gray-100">Pengingat Sholat & Dzikir</h4>
+                                    <p style="font-size:11px;color:#6b7280;line-height:1.4;" class="dark:text-gray-400">Mendukung notifikasi web push untuk jadwal sholat dan mutaba'ah harian Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>{{-- .settings-content --}}
 
             {{-- ── STICKY FOOTER (hanya untuk form tab akun, personalisasi, notifikasi) ── --}}
-            <div class="settings-footer" x-show="activeTab !== 'laporan'">
+            <div class="settings-footer" x-show="activeTab !== 'laporan' && activeTab !== 'aplikasi'">
                 <span style="font-size:12px;font-weight:600;color:#9ca3af;"
-                      x-text="'Tab aktif: ' + {'akun':'Akun & Profil','personalisasi':'Personalisasi','notifikasi':'Notifikasi','privasi':'Data & Privasi','laporan':'Laporan'}[activeTab]">
+                      x-text="'Tab aktif: ' + {'akun':'Akun & Profil','personalisasi':'Personalisasi','notifikasi':'Notifikasi','privasi':'Data & Privasi','laporan':'Laporan','aplikasi':'Instal Aplikasi'}[activeTab]">
                 </span>
-                <button type="submit" id="saveSettingsBtn" class="btn-save" x-show="activeTab !== 'privasi' && activeTab !== 'laporan'">
+                <button type="submit" id="saveSettingsBtn" class="btn-save" x-show="activeTab !== 'privasi' && activeTab !== 'laporan' && activeTab !== 'aplikasi'">
                     <i class="fa-solid fa-floppy-disk" style="margin-right:8px;"></i>
                     Simpan Perubahan
                 </button>

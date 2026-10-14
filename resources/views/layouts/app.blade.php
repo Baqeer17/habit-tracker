@@ -642,6 +642,18 @@
             return outputArray;
         }
 
+        // ── PWA Global State & Prompt Listener ──
+        window.pwaDeferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            window.pwaDeferredPrompt = e;
+            window.dispatchEvent(new CustomEvent('pwa-prompt-available', { detail: e }));
+        });
+        window.addEventListener('appinstalled', function() {
+            window.pwaDeferredPrompt = null;
+            window.dispatchEvent(new CustomEvent('pwa-installed'));
+        });
+
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {

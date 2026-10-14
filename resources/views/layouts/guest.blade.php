@@ -97,6 +97,17 @@
         });
     </script>
 
+    <!-- Service Worker for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                    console.log('SW registration failed:', err);
+                });
+            });
+        }
+    </script>
+
     @stack('scripts')
 </body>
 </html>
