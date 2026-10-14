@@ -6,11 +6,16 @@
 
         <title>MahabBa</title>
         <!-- PWA Manifest & Favicons -->
+        <meta name="theme-color" content="#0F766E">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <meta name="apple-mobile-web-app-title" content="MahabBa">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icon.png') }}?v=2">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icon.png') }}?v=2">
         <link rel="shortcut icon" href="{{ asset('icon.png') }}?v=2">
         <link rel="apple-touch-icon" href="{{ asset('icon.png') }}?v=2">
-        <link rel="manifest" href="{{ asset('manifest.json') }}?v=2">
+        <link rel="manifest" href="{{ asset('manifest.json') }}?v=3">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

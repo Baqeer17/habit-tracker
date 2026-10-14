@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install pdo pdo_pgsql zip
 
 # Enable Apache mod_rewrite agar routing Laravel (index.php) bekerja normal
-RUN a2enmod rewrite
+RUN a2enmod rewrite && (a2dismod alias || true)
 
 # Ubah default DocumentRoot Apache agar mengarah langsung ke folder /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
