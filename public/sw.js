@@ -33,8 +33,8 @@ self.addEventListener('push', event => {
 
     const options = {
         body: data.body,
-        icon: '/pwa-icons/icon-192x192.png',
-        badge: '/pwa-icons/icon-192x192.png',
+        icon: '/icon-192x192.png',
+        badge: '/icon-192x192.png',
         data: { url: data.url || '/dashboard' }
     };
 
